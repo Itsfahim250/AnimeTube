@@ -129,7 +129,7 @@ img{object-fit:cover}
 .video-channel:hover { color:var(--text); }
 .video-stats { font-size:11px; color:var(--text2); margin-top:2px; }
 
-/* Custom Video Player & Fullscreen Fallback */
+/* Custom Video Player */
 #page-watch .watch-layout { display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:24px; }
 @media(max-width:900px){ #page-watch .watch-layout { grid-template-columns:1fr; } }
 
@@ -280,15 +280,13 @@ img{object-fit:cover}
   .upload-btn { display: none; }
   #bottom-nav { display: flex; }
   .video-grid { grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px; }
-  .page { padding:12px; padding-bottom: 75px; /* Leave room for bottom nav */ }
+  .page { padding:12px; padding-bottom: 75px; }
   #search-bar { max-width:none; }
   .custom-player-container { border-radius: 0; margin-left: -12px; margin-right: -12px; width: calc(100% + 24px); }
   .upload-btn span { display: none; }
 }
 
-/* =========================================================
-   COMMENT SYSTEM
-========================================================= */
+/* COMMENT SYSTEM */
 .comments-section { margin-top: 20px; }
 .comments-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
 .comments-header h3 { font-size:16px; font-weight:700; }
@@ -388,12 +386,10 @@ img{object-fit:cover}
     <span id="pd-username">Guest</span>
   </div>
   <div style="height:1px;background:var(--border);margin:4px 0;"></div>
-  
   <div class="pd-item" id="pd-your-channel" style="display:none;" onclick="navigate('channel', { channelId: State.currentUser.uid }); closeMenus()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm5 11H7v-1.5c0-1.66 3.33-2.5 5-2.5s5 .84 5 2.5V17z"/></svg>
     Your Channel
   </div>
-  
   <div class="pd-item" onclick="navigate('history');closeMenus()">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
     Watch History
@@ -438,23 +434,18 @@ img{object-fit:cover}
 
   <!-- HOME PAGE -->
   <div id="page-home" class="page active">
-    <!-- Upload Background Processing Progress -->
     <div class="upload-progress-banner" id="upload-progress-banner" style="display:none;">
-       <div class="up-banner-row">
-          <span>Processing Upload...</span>
-          <span id="upload-percent">0%</span>
-       </div>
+       <div class="up-banner-row"><span>Processing Upload...</span><span id="upload-percent">0%</span></div>
        <div class="c-progress-container" style="pointer-events:none; background: var(--bg3);">
           <div class="c-progress-filled" id="upload-prog-bar" style="background: var(--accent); transition: width 0.3s;"></div>
        </div>
     </div>
-
     <div class="category-chips" id="category-chips">
       <div class="chip active" onclick="filterCategory('All')">All</div>
       <div class="chip" onclick="filterCategory('Music')">Music</div>
       <div class="chip" onclick="filterCategory('Gaming')">Gaming</div>
       <div class="chip" onclick="filterCategory('Tech')">Tech</div>
-      <div class="chip" onclick="filterCategory('Education')">Education</div>
+      <div class="chip" onclick="filterCategory('Anime')">Anime</div>
     </div>
     <div class="video-grid" id="home-grid"></div>
   </div>
@@ -524,6 +515,7 @@ img{object-fit:cover}
         <select id="up-cat">
           <option>Music</option><option>Gaming</option><option>Tech</option>
           <option>News</option><option>Education</option><option>Comedy</option>
+          <option>Anime</option>
         </select>
       </div>
       <div class="form-group">
@@ -550,18 +542,11 @@ img{object-fit:cover}
         <div class="player-controls" id="player-controls"></div>
         <div class="watch-channel-row" id="watch-channel-row"></div>
         <div class="watch-desc" id="watch-desc" onclick="this.classList.toggle('expanded')"></div>
-      <!-- COMMENT SECTION -->
       <div class="comments-section" id="comments-section">
-        <div class="comments-header">
-          <h3 id="comments-count-title">Comments</h3>
-        </div>
+        <div class="comments-header"><h3 id="comments-count-title">Comments</h3></div>
         <div id="comment-input-area"></div>
-        <div class="comment-list" id="comment-list">
-          <div style="color:var(--text2);font-size:14px;">Loading comments...</div>
-        </div>
-        <div class="comment-load-more" id="comment-load-more" style="display:none;">
-          <button onclick="loadMoreComments()">Load more comments</button>
-        </div>
+        <div class="comment-list" id="comment-list"><div style="color:var(--text2);font-size:14px;">Loading comments...</div></div>
+        <div class="comment-load-more" id="comment-load-more" style="display:none;"><button onclick="loadMoreComments()">Load more comments</button></div>
       </div>
       </div>
       <div id="watch-sidebar">
@@ -590,63 +575,29 @@ img{object-fit:cover}
         <div class="auth-tab active" onclick="switchAuthTab('login',this)">Sign In</div>
         <div class="auth-tab" onclick="switchAuthTab('signup',this)">Sign Up</div>
       </div>
-      <!-- LOGIN FORM -->
       <div id="auth-login">
-        <!-- Step 1: Credentials -->
         <div id="login-step1">
-          <div class="form-group">
-            <label>Username (Email)</label>
-            <input type="text" id="login-email" placeholder="you@gmail.com"/>
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')requestLoginOtp()"/>
-          </div>
-          <button class="auth-btn" onclick="requestLoginOtp()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-            Send OTP & Sign In
-          </button>
+          <div class="form-group"><label>Username (Email)</label><input type="text" id="login-email" placeholder="you@gmail.com"/></div>
+          <div class="form-group"><label>Password</label><input type="password" id="login-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')requestLoginOtp()"/></div>
+          <button class="auth-btn" onclick="requestLoginOtp()">Send OTP & Sign In</button>
         </div>
-        <!-- Step 2: OTP -->
         <div id="login-step2" style="display:none;">
-          <p style="color:var(--text2);font-size:13px;margin-bottom:16px;text-align:center;">📧 OTP পাঠানো হয়েছে <strong id="login-otp-email-display"></strong> এ। নিচে দিন।</p>
-          <div class="form-group">
-            <label>OTP Code</label>
-            <input type="text" id="login-otp" placeholder="6-digit OTP" maxlength="6" style="letter-spacing:6px;font-size:20px;text-align:center;" onkeydown="if(event.key==='Enter')verifyLoginOtp()"/>
-          </div>
+          <p style="color:var(--text2);font-size:13px;margin-bottom:16px;text-align:center;">📧 OTP পাঠানো হয়েছে <strong id="login-otp-email-display"></strong> এ।</p>
+          <div class="form-group"><label>OTP Code</label><input type="text" id="login-otp" placeholder="6-digit OTP" maxlength="6" style="letter-spacing:6px;font-size:20px;text-align:center;" onkeydown="if(event.key==='Enter')verifyLoginOtp()"/></div>
           <button class="auth-btn" onclick="verifyLoginOtp()">✅ Verify & Sign In</button>
           <button onclick="showLoginStep1()" style="width:100%;margin-top:10px;padding:10px;border-radius:8px;background:var(--bg3);color:var(--text2);font-size:13px;cursor:pointer;border:1px solid var(--border);">← Back</button>
         </div>
       </div>
-
-      <!-- SIGNUP FORM -->
       <div id="auth-signup" style="display:none;">
-        <!-- Step 1: Details -->
         <div id="signup-step1">
-          <div class="form-group">
-            <label>Display Name</label>
-            <input type="text" id="signup-name" placeholder="Your Name"/>
-          </div>
-          <div class="form-group">
-            <label>Username (Email)</label>
-            <input type="text" id="signup-email" placeholder="you@gmail.com"/>
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input type="password" id="signup-pass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')requestSignupOtp()"/>
-          </div>
-          <button class="auth-btn" onclick="requestSignupOtp()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-            Send OTP & Register
-          </button>
+          <div class="form-group"><label>Display Name</label><input type="text" id="signup-name" placeholder="Your Name"/></div>
+          <div class="form-group"><label>Username (Email)</label><input type="text" id="signup-email" placeholder="you@gmail.com"/></div>
+          <div class="form-group"><label>Password</label><input type="password" id="signup-pass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')requestSignupOtp()"/></div>
+          <button class="auth-btn" onclick="requestSignupOtp()">Send OTP & Register</button>
         </div>
-        <!-- Step 2: OTP -->
         <div id="signup-step2" style="display:none;">
-          <p style="color:var(--text2);font-size:13px;margin-bottom:16px;text-align:center;">📧 OTP পাঠানো হয়েছে <strong id="signup-otp-email-display"></strong> এ। নিচে দিন।</p>
-          <div class="form-group">
-            <label>OTP Code</label>
-            <input type="text" id="signup-otp" placeholder="6-digit OTP" maxlength="6" style="letter-spacing:6px;font-size:20px;text-align:center;" onkeydown="if(event.key==='Enter')verifySignupOtp()"/>
-          </div>
+          <p style="color:var(--text2);font-size:13px;margin-bottom:16px;text-align:center;">📧 OTP পাঠানো হয়েছে <strong id="signup-otp-email-display"></strong> এ।</p>
+          <div class="form-group"><label>OTP Code</label><input type="text" id="signup-otp" placeholder="6-digit OTP" maxlength="6" style="letter-spacing:6px;font-size:20px;text-align:center;" onkeydown="if(event.key==='Enter')verifySignupOtp()"/></div>
           <button class="auth-btn" onclick="verifySignupOtp()">✅ Verify & Create Account</button>
           <button onclick="showSignupStep1()" style="width:100%;margin-top:10px;padding:10px;border-radius:8px;background:var(--bg3);color:var(--text2);font-size:13px;cursor:pointer;border:1px solid var(--border);">← Back</button>
         </div>
@@ -655,1175 +606,287 @@ img{object-fit:cover}
   </div>
 
 </main>
-</div><!-- /body-wrap -->
-</div><!-- /app -->
-
-<!-- Toast -->
-<div id="toast-container"></div>
-<!-- Spinner -->
-<div id="loading-spinner">
-    <div class="spinner"></div>
-    <div id="loading-text" style="font-weight:600; font-size:14px;">Loading...</div>
+</div>
 </div>
 
-<!-- JAVASCRIPT -->
+<div id="toast-container"></div>
+<div id="loading-spinner"><div class="spinner"></div><div id="loading-text" style="font-weight:600; font-size:14px;">Loading...</div></div>
+
 <script>
 /* =========================================================
-   Cloud Nest BaaS Integration
+   Cloud Nest BaaS Integration (Synced Configuration)
 ========================================================= */
 const B = "https://cloudnest.pythonanywhere.com";
-const K = "rf_admin250fahim771357013"; // Change this to your real API Key
+const K = "rf_admin250fahim771357013";
 
-/* STATE Management */
-const State = {
-  currentUser: null,
-  currentPage: 'home',
-  currentVideo: null,
-  currentCategory: 'All',
-  currentSearchQuery: '',
-  subscriptions: [],
-  history: [],
-  watchLater: [],
-  channelCache: {}
-};
+/* STATE */
+const State = { currentUser: null, currentPage: 'home', currentVideo: null, currentCategory: 'All', currentSearchQuery: '', subscriptions: [], history: [], watchLater: [], channelCache: {} };
 
-/* API Helpers */
-async function cloudSet(key, data) {
-  try {
-    const r = await fetch(B+"/api/db", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({api_key:K, action:"save", key:key, data:data})
-    });
-    return await r.json();
-  } catch(e) { console.error(e); return null; }
-}
+async function cloudSet(key, data) { try { const r = await fetch(B+"/api/db", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"save", key:key, data:data}) }); return await r.json(); } catch(e) { return null; } }
+async function cloudGet(key) { try { const r = await fetch(B+"/api/db", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"load", key:key}) }); const res = await r.json(); return res.data; } catch(e) { return null; } }
+async function updateVideoInDB(videoId, updates) { const videos = await getVideos(); const vIndex = videos.findIndex(v => v.id === videoId); if(vIndex > -1) { videos[vIndex] = { ...videos[vIndex], ...updates }; await cloudSet('videos', videos); } }
 
-async function cloudGet(key) {
-  try {
-    const r = await fetch(B+"/api/db", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({api_key:K, action:"load", key:key})
-    });
-    const res = await r.json();
-    return res.data; 
-  } catch(e) { console.error(e); return null; }
-}
-
-/* Update Single Video Function */
-async function updateVideoInDB(videoId, updates) {
-  const videos = await getVideos();
-  const vIndex = videos.findIndex(v => v.id === videoId);
-  if(vIndex > -1) {
-    videos[vIndex] = { ...videos[vIndex], ...updates };
-    await cloudSet('videos', videos);
-  }
-}
-
-/* Initialization */
-window.onload = async () => {
-  const saved = localStorage.getItem('vt_user');
-  if (saved) {
-    State.currentUser = JSON.parse(saved);
-    await loadUserData(State.currentUser.uid);
-  }
-  updateNavForUser();
-  navigate('home'); 
-};
+window.onload = async () => { const saved = localStorage.getItem('vt_user'); if (saved) { State.currentUser = JSON.parse(saved); await loadUserData(State.currentUser.uid); } updateNavForUser(); navigate('home'); };
 
 /* AUTH */
 function updateNavForUser() {
-  const u = State.currentUser;
-  document.getElementById('pd-username').textContent = u ? u.displayName : 'Guest';
-  const btn = document.getElementById('pd-auth-btn');
-  const chBtn = document.getElementById('pd-your-channel');
-  
-  if (u) {
-    btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg> Sign Out`;
-    chBtn.style.display = 'flex';
-    const seed = encodeURIComponent(u.displayName||u.uid);
-    document.getElementById('nav-avatar').src = `https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundColor=ff3b3b&textColor=ffffff`;
-  } else {
-    btn.innerHTML = `Sign In`;
-    chBtn.style.display = 'none';
-    document.getElementById('nav-avatar').src = `https://api.dicebear.com/7.x/initials/svg?seed=Guest&backgroundColor=444444&textColor=ffffff`;
-  }
+  const u = State.currentUser; document.getElementById('pd-username').textContent = u ? u.displayName : 'Guest';
+  const btn = document.getElementById('pd-auth-btn'); const chBtn = document.getElementById('pd-your-channel');
+  if (u) { btn.innerHTML = `Sign Out`; chBtn.style.display = 'flex'; document.getElementById('nav-avatar').src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u.displayName||u.uid)}&backgroundColor=ff3b3b&textColor=ffffff`; } 
+  else { btn.innerHTML = `Sign In`; chBtn.style.display = 'none'; document.getElementById('nav-avatar').src = `https://api.dicebear.com/7.x/initials/svg?seed=Guest&backgroundColor=444444&textColor=ffffff`; }
 }
 
-/* =========================================================
-   OTP AUTH HELPERS
-========================================================= */
 const OTP_API_KEY = 'rf_admin250fahim771357013';
-const OTP_BASE    = 'https://cloudnest.pythonanywhere.com/api/otp';
+const OTP_BASE = 'https://cloudnest.pythonanywhere.com/api/otp';
 const ALLOWED_DOMAINS = ['gmail.com','outlook.com','hotmail.com'];
 
-function isAllowedEmail(email) {
-  const domain = email.split('@')[1] || '';
-  return ALLOWED_DOMAINS.includes(domain.toLowerCase());
-}
+function isAllowedEmail(email) { const domain = email.split('@')[1] || ''; return ALLOWED_DOMAINS.includes(domain.toLowerCase()); }
+async function sendOtp(email) { const r = await fetch(OTP_BASE+'/send', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ api_key: OTP_API_KEY, email }) }); return await r.json(); }
+async function verifyOtp(email, otp) { const r = await fetch(OTP_BASE+'/verify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ api_key: OTP_API_KEY, email, otp: String(otp) }) }); return await r.json(); }
 
-async function sendOtp(email) {
-  const r = await fetch(OTP_BASE+'/send', {
-    method:'POST',
-    mode: 'cors',
-    credentials: 'omit',
-    headers:{
-      'Content-Type':'application/json',
-      'Accept':'application/json'
-    },
-    body: JSON.stringify({ api_key: OTP_API_KEY, email })
-  });
-  if (!r.ok) throw new Error('Server error: ' + r.status);
-  return await r.json();
-}
-
-async function verifyOtp(email, otp) {
-  const r = await fetch(OTP_BASE+'/verify', {
-    method:'POST',
-    mode: 'cors',
-    credentials: 'omit',
-    headers:{
-      'Content-Type':'application/json',
-      'Accept':'application/json'
-    },
-    body: JSON.stringify({ api_key: OTP_API_KEY, email, otp: String(otp) })
-  });
-  if (!r.ok) throw new Error('Server error: ' + r.status);
-  return await r.json();
-}
-
-/* LOGIN OTP FLOW */
-function showLoginStep1() {
-  document.getElementById('login-step1').style.display = 'block';
-  document.getElementById('login-step2').style.display = 'none';
-}
-
+function showLoginStep1() { document.getElementById('login-step1').style.display = 'block'; document.getElementById('login-step2').style.display = 'none'; }
 async function requestLoginOtp() {
-  const email = document.getElementById('login-email').value.trim();
-  const pass  = document.getElementById('login-pass').value;
-  if (!email || !pass) { toast('সব ফিল্ড পূরণ করুন','error'); return; }
-  if (!isAllowedEmail(email)) { toast('শুধু @gmail.com, @outlook.com, @hotmail.com ইমেইল অনুমোদিত','error'); return; }
-
-  // First verify credentials with backend
+  const email = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-pass').value;
+  if (!email || !pass) return toast('সব ফিল্ড পূরণ করুন','error'); if (!isAllowedEmail(email)) return toast('শুধু @gmail.com, @outlook.com, @hotmail.com ইমেইল অনুমোদিত','error');
   showSpinner("Checking credentials...");
   try {
-    const r = await fetch(B+"/api/auth", {
-      method:"POST", headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({api_key:K, action:"login", username:email, password:pass})
-    });
-    const res = await r.json();
-    hideSpinner();
-    if(!(res.status === 'success' || res.message === 'Login successful')) {
-      toast(res.message || 'ইমেইল বা পাসওয়ার্ড ভুল', 'error'); return;
-    }
-  } catch(e) { hideSpinner(); toast('Error: '+e.message,'error'); return; }
-
-  // Send OTP
+    const r = await fetch(B+"/api/auth", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"login", username:email, password:pass}) }); const res = await r.json();
+    if(!(res.status === 'success' || res.message === 'Login successful')) { hideSpinner(); return toast(res.message || 'ইমেইল বা পাসওয়ার্ড ভুল', 'error'); }
+  } catch(e) { hideSpinner(); return toast('Error: '+e.message,'error'); }
   showSpinner("OTP পাঠানো হচ্ছে...");
   try {
-    const res = await sendOtp(email);
-    hideSpinner();
-    if (res.success || res.status === 'success' || res.message?.toLowerCase().includes('sent') || res.message?.toLowerCase().includes('otp')) {
-      document.getElementById('login-otp-email-display').textContent = email;
-      document.getElementById('login-step1').style.display = 'none';
-      document.getElementById('login-step2').style.display = 'block';
-      document.getElementById('login-otp').value = '';
-      document.getElementById('login-otp').focus();
-      toast('OTP পাঠানো হয়েছে! ইমেইল চেক করুন।','success');
-    } else {
-      toast(res.message || 'OTP পাঠাতে ব্যর্থ হয়েছে', 'error');
-    }
-  } catch(e) {
-    hideSpinner();
-    if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
-      toast('নেটওয়ার্ক সমস্যা — ইন্টারনেট কানেকশন চেক করুন','error');
-    } else {
-      toast('OTP Error: ' + e.message, 'error');
-    }
-  }
+    const res = await sendOtp(email); hideSpinner();
+    if (res.success || res.status === 'success' || res.message?.toLowerCase().includes('sent')) {
+      document.getElementById('login-otp-email-display').textContent = email; document.getElementById('login-step1').style.display = 'none'; document.getElementById('login-step2').style.display = 'block'; toast('OTP পাঠানো হয়েছে!','success');
+    } else toast(res.message || 'OTP পাঠাতে ব্যর্থ', 'error');
+  } catch(e) { hideSpinner(); toast('OTP Error: ' + e.message, 'error'); }
 }
 
 async function verifyLoginOtp() {
-  const email = document.getElementById('login-email').value.trim();
-  const otp   = document.getElementById('login-otp').value.trim();
-  if (!otp) { toast('OTP দিন','error'); return; }
-
-  showSpinner("Verifying OTP...");
+  const email = document.getElementById('login-email').value.trim(); const otp = document.getElementById('login-otp').value.trim();
+  if (!otp) return toast('OTP দিন','error');
+  showSpinner("Verifying...");
   try {
-    const res = await verifyOtp(email, otp);
-    hideSpinner();
-    if (res.success || res.status === 'success' || res.valid === true || res.message?.toLowerCase().includes('verified')) {
-      State.currentUser = { uid: email, email: email, displayName: email.split('@')[0] };
-      localStorage.setItem('vt_user', JSON.stringify(State.currentUser));
-      await loadUserData(email);
-      updateNavForUser();
-      showLoginStep1();
-      toast('স্বাগতম! সফলভাবে লগইন হয়েছে।','success');
-      navigate('home');
-    } else {
-      toast(res.message || 'OTP ভুল! আবার চেষ্টা করুন।', 'error');
-    }
-  } catch(e) { hideSpinner(); toast('Verify Error: '+e.message,'error'); }
-}
-
-/* SIGNUP OTP FLOW */
-function showSignupStep1() {
-  document.getElementById('signup-step1').style.display = 'block';
-  document.getElementById('signup-step2').style.display = 'none';
-}
-
-async function requestSignupOtp() {
-  const name  = document.getElementById('signup-name').value.trim();
-  const email = document.getElementById('signup-email').value.trim();
-  const pass  = document.getElementById('signup-pass').value;
-  if (!name || !email || !pass) { toast('সব ফিল্ড পূরণ করুন','error'); return; }
-  if (pass.length < 6) { toast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে','error'); return; }
-  if (!isAllowedEmail(email)) { toast('শুধু @gmail.com, @outlook.com, @hotmail.com ইমেইল অনুমোদিত','error'); return; }
-
-  showSpinner("OTP পাঠানো হচ্ছে...");
-  try {
-    const res = await sendOtp(email);
-    hideSpinner();
-    if (res.success || res.status === 'success' || res.message?.toLowerCase().includes('sent') || res.message?.toLowerCase().includes('otp')) {
-      document.getElementById('signup-otp-email-display').textContent = email;
-      document.getElementById('signup-step1').style.display = 'none';
-      document.getElementById('signup-step2').style.display = 'block';
-      document.getElementById('signup-otp').value = '';
-      document.getElementById('signup-otp').focus();
-      toast('OTP পাঠানো হয়েছে! ইমেইল চেক করুন।','success');
-    } else {
-      toast(res.message || 'OTP পাঠাতে ব্যর্থ','error');
-    }
-  } catch(e) {
-    hideSpinner();
-    if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
-      toast('নেটওয়ার্ক সমস্যা — ইন্টারনেট কানেকশন চেক করুন','error');
-    } else {
-      toast('OTP Error: ' + e.message, 'error');
-    }
-  }
-}
-
-async function verifySignupOtp() {
-  const name  = document.getElementById('signup-name').value.trim();
-  const email = document.getElementById('signup-email').value.trim();
-  const pass  = document.getElementById('signup-pass').value;
-  const otp   = document.getElementById('signup-otp').value.trim();
-  if (!otp) { toast('OTP দিন','error'); return; }
-
-  showSpinner("OTP যাচাই করা হচ্ছে...");
-  try {
-    const res = await verifyOtp(email, otp);
-    hideSpinner();
-    if (res.success || res.status === 'success' || res.valid === true || res.message?.toLowerCase().includes('verified')) {
-      // Now register the user
-      showSpinner("অ্যাকাউন্ট তৈরি হচ্ছে...");
-      const r2 = await fetch(B+"/api/auth", {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({api_key:K, action:"register", username:email, password:pass})
-      });
-      const res2 = await r2.json();
-      hideSpinner();
-      if(res2.status === 'success' || res2.message === 'User registered successfully') {
-        State.currentUser = { uid: email, email: email, displayName: name };
-        localStorage.setItem('vt_user', JSON.stringify(State.currentUser));
-        await cloudSet('users_' + email, { displayName: name, email, createdAt: Date.now(), about: '' });
-        await loadUserData(email);
-        updateNavForUser();
-        showSignupStep1();
-        toast('অ্যাকাউন্ট তৈরি হয়েছে! স্বাগতম ' + name, 'success');
-        navigate('home');
-      } else {
-        toast(res2.message || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে', 'error');
-      }
-    } else {
-      toast(res.message || 'OTP ভুল! আবার চেষ্টা করুন।', 'error');
-    }
+    const res = await verifyOtp(email, otp); hideSpinner();
+    if (res.success || res.status === 'success' || res.valid === true) {
+      State.currentUser = { uid: email, email: email, displayName: email.split('@')[0] }; localStorage.setItem('vt_user', JSON.stringify(State.currentUser)); await loadUserData(email); updateNavForUser(); showLoginStep1(); toast('সফলভাবে লগইন হয়েছে।','success'); navigate('home');
+    } else toast('OTP ভুল!', 'error');
   } catch(e) { hideSpinner(); toast('Error: '+e.message,'error'); }
 }
 
-async function doLogin() {
-  // kept for compatibility — now calls OTP flow
-  requestLoginOtp();
+function showSignupStep1() { document.getElementById('signup-step1').style.display = 'block'; document.getElementById('signup-step2').style.display = 'none'; }
+async function requestSignupOtp() {
+  const name = document.getElementById('signup-name').value.trim(); const email = document.getElementById('signup-email').value.trim(); const pass = document.getElementById('signup-pass').value;
+  if (!name || !email || !pass) return toast('সব ফিল্ড পূরণ করুন','error'); if (pass.length < 6) return toast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে','error'); if (!isAllowedEmail(email)) return toast('শুধু @gmail.com, @outlook.com, @hotmail.com ইমেইল অনুমোদিত','error');
+  showSpinner("OTP পাঠানো হচ্ছে...");
+  try {
+    const res = await sendOtp(email); hideSpinner();
+    if (res.success || res.status === 'success' || res.message?.toLowerCase().includes('sent')) {
+      document.getElementById('signup-otp-email-display').textContent = email; document.getElementById('signup-step1').style.display = 'none'; document.getElementById('signup-step2').style.display = 'block'; toast('OTP পাঠানো হয়েছে!','success');
+    } else toast(res.message || 'OTP পাঠাতে ব্যর্থ','error');
+  } catch(e) { hideSpinner(); toast('OTP Error: ' + e.message, 'error'); }
 }
 
-async function doSignup() {
-  // kept for compatibility — now calls OTP flow
-  requestSignupOtp();
+async function verifySignupOtp() {
+  const name = document.getElementById('signup-name').value.trim(); const email = document.getElementById('signup-email').value.trim(); const pass = document.getElementById('signup-pass').value; const otp = document.getElementById('signup-otp').value.trim();
+  if (!otp) return toast('OTP দিন','error'); showSpinner("যাচাই করা হচ্ছে...");
+  try {
+    const res = await verifyOtp(email, otp);
+    if (res.success || res.status === 'success' || res.valid === true) {
+      const r2 = await fetch(B+"/api/auth", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"register", username:email, password:pass}) }); const res2 = await r2.json(); hideSpinner();
+      if(res2.status === 'success' || res2.message === 'User registered successfully') {
+        State.currentUser = { uid: email, email: email, displayName: name }; localStorage.setItem('vt_user', JSON.stringify(State.currentUser)); await cloudSet('users_' + email, { displayName: name, email, createdAt: Date.now() }); await loadUserData(email); updateNavForUser(); showSignupStep1(); toast('অ্যাকাউন্ট তৈরি হয়েছে!', 'success'); navigate('home');
+      } else toast(res2.message || 'রেজিস্ট্রেশন ব্যর্থ', 'error');
+    } else { hideSpinner(); toast('OTP ভুল!', 'error'); }
+  } catch(e) { hideSpinner(); toast('Error: '+e.message,'error'); }
 }
 
-function signOutUser() {
-  State.currentUser = null; 
-  localStorage.removeItem('vt_user');
-  State.subscriptions=[]; State.history=[]; State.watchLater=[];
-  updateNavForUser(); 
-  toast('Signed out','success'); 
-  navigate('home');
-}
+function signOutUser() { State.currentUser = null; localStorage.removeItem('vt_user'); updateNavForUser(); toast('Signed out','success'); navigate('home'); }
 function handleAuthClick() { closeMenus(); if (State.currentUser) signOutUser(); else navigate('auth'); }
+async function loadUserData(uid) { const data = await cloudGet('users_'+uid); if (data) { State.currentUser.displayName = data.displayName||State.currentUser.displayName; State.subscriptions = data.subscriptions||[]; State.history = data.history||[]; State.watchLater = data.watchLater||[]; } }
+async function saveUserData() { if(!State.currentUser) return; const data = await cloudGet('users_'+State.currentUser.uid) || {}; data.subscriptions = State.subscriptions; data.history = State.history; data.watchLater = State.watchLater; await cloudSet('users_'+State.currentUser.uid, data); }
 
-async function loadUserData(uid) {
-  const data = await cloudGet('users_'+uid);
-  if (data) {
-    if(data.displayName) State.currentUser.displayName = data.displayName;
-    State.subscriptions = data.subscriptions || [];
-    State.history       = data.history       || [];
-    State.watchLater    = data.watchLater    || [];
-  } else {
-    State.subscriptions = []; State.history = []; State.watchLater = [];
-  }
-}
-async function saveUserData() {
-  if(!State.currentUser) return;
-  const uid = State.currentUser.uid;
-  const data = await cloudGet('users_'+uid) || {};
-  data.subscriptions = State.subscriptions;
-  data.history = State.history;
-  data.watchLater = State.watchLater;
-  await cloudSet('users_'+uid, data);
-}
-
-/* STOP ALL VIDEOS (Background play fix) */
-function stopAllVideos() {
-  document.querySelectorAll('video').forEach(vid => {
-    vid.pause();
-    vid.removeAttribute('src'); 
-    vid.load();
-  });
-  document.getElementById('player-wrap').innerHTML = '';
-  document.getElementById('shorts-container').innerHTML = '';
-}
-
-/* ROUTING */
+function stopAllVideos() { document.querySelectorAll('video').forEach(vid => { vid.pause(); vid.removeAttribute('src'); vid.load(); }); document.getElementById('player-wrap').innerHTML = ''; document.getElementById('shorts-container').innerHTML = ''; }
 const PAGES = ['home','shorts','library','history','upload','watch','search','auth','channel'];
 function navigate(page, params={}) {
-  stopAllVideos(); 
-
-  PAGES.forEach(p => { const el=document.getElementById('page-'+p); if(el)el.classList.remove('active'); });
-  
-  // Desktop Sidebar active states
-  document.querySelectorAll('.side-item').forEach(i=>i.classList.remove('active'));
+  stopAllVideos(); PAGES.forEach(p => { const el=document.getElementById('page-'+p); if(el)el.classList.remove('active'); });
+  document.querySelectorAll('.side-item, .bn-item').forEach(i=>i.classList.remove('active'));
   const sideEl = document.getElementById('side-'+page); if (sideEl) sideEl.classList.add('active');
-  
-  // Bottom Nav active states
-  document.querySelectorAll('.bn-item').forEach(i=>i.classList.remove('active'));
   const bnEl = document.getElementById('bn-'+page); if(bnEl) bnEl.classList.add('active');
-
   const pageEl = document.getElementById('page-'+page); if (pageEl) pageEl.classList.add('active');
-  
-  State.currentPage = page; closeSidebar(); 
-  // Fix shorts double scroll
-  const mainEl = document.getElementById('main');
-  if (page === 'shorts') {
-    mainEl.style.overflow = 'hidden';
-  } else {
-    mainEl.style.overflow = '';
-    mainEl.scrollTo(0,0);
-  }
-  
-  if (page === 'home') renderHome();
-  else if (page === 'shorts') renderShorts();
-  else if (page === 'library') renderLibrary();
-  else if (page === 'history') renderHistoryPage();
-  else if (page === 'watch') renderWatch(params);
-  else if (page === 'search') renderSearch();
-  else if (page === 'channel') renderChannel(params.channelId);
+  State.currentPage = page; closeSidebar();
+  if (page === 'shorts') document.getElementById('main').style.overflow = 'hidden'; else { document.getElementById('main').style.overflow = ''; document.getElementById('main').scrollTo(0,0); }
+  if (page === 'home') renderHome(); else if (page === 'shorts') renderShorts(); else if (page === 'library') renderLibrary(); else if (page === 'history') renderHistoryPage(); else if (page === 'watch') renderWatch(params); else if (page === 'search') renderSearch(); else if (page === 'channel') renderChannel(params.channelId);
 }
 
-/* HELPER FUNCTIONS */
 const THUMB_PLACEHOLDERS = Array.from({length:12},(_,i)=>`https://picsum.photos/seed/vt${i+1}/640/360`);
+async function getVideos() { let vids = await cloudGet('videos'); return vids || []; }
+async function getChannelInfo(channelId) { if (!channelId) return { name:'Unknown', avatar: THUMB_PLACEHOLDERS[0] }; if (State.channelCache[channelId]) return State.channelCache[channelId]; const user = await cloudGet('users_'+channelId); if (user) { const ch = { id: channelId, name: user.displayName || channelId, avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.displayName||channelId)}&backgroundColor=ff3b3b&textColor=ffffff` }; State.channelCache[channelId] = ch; return ch; } return { id:channelId, name: channelId, avatar:`https://api.dicebear.com/7.x/initials/svg?seed=${channelId}&backgroundColor=555&textColor=fff` }; }
 
-async function getVideos() {
-  let vids = await cloudGet('videos');
-  if (!vids || vids.length === 0) {
-    vids = [{ id: 'v1', title: 'Sample AnimeTube Video', driveLink: 'https://www.w3schools.com/html/mov_bbb.mp4', thumbnail: THUMB_PLACEHOLDERS[0], duration: '0:10', category: 'Tech', channelId: 'admin', views: 100, viewedBy:[], likes:[], uploadDate: new Date().toISOString(), type: 'video', status: 'approved' }];
-    await cloudSet('videos', vids);
-  }
-  return vids;
-}
-
-async function getChannelInfo(channelId) {
-  if (!channelId) return { name:'Unknown', avatar: THUMB_PLACEHOLDERS[0] };
-  if (State.channelCache[channelId]) return State.channelCache[channelId];
-  
-  const user = await cloudGet('users_'+channelId);
-  if (user) {
-    const ch = { id: channelId, name: user.displayName || channelId, avatar: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(user.displayName||channelId)}&backgroundColor=ff3b3b&textColor=ffffff` };
-    State.channelCache[channelId] = ch; return ch;
-  }
-  return { id:channelId, name: channelId, avatar:`https://api.dicebear.com/7.x/initials/svg?seed=${channelId}&backgroundColor=555&textColor=fff` };
-}
-
-function timeAgo(iso) {
-  if (!iso) return '';
-  const diff=(Date.now()-new Date(iso))/1000;
-  if (diff<60) return Math.floor(diff)+'s ago';
-  if (diff<3600) return Math.floor(diff/60)+'m ago';
-  if (diff<86400) return Math.floor(diff/3600)+'h ago';
-  if (diff<2592000) return Math.floor(diff/86400)+'d ago';
-  return Math.floor(diff/31536000)+'y ago';
-}
-function formatTime(sec) {
-  let m = Math.floor(sec / 60); let s = Math.floor(sec % 60);
-  return m + ':' + (s < 10 ? '0' : '') + s;
-}
+function timeAgo(iso) { if (!iso) return ''; const diff=(Date.now()-new Date(iso))/1000; if (diff<60) return Math.floor(diff)+'s ago'; if (diff<3600) return Math.floor(diff/60)+'m ago'; if (diff<86400) return Math.floor(diff/3600)+'h ago'; if (diff<2592000) return Math.floor(diff/86400)+'d ago'; return Math.floor(diff/31536000)+'y ago'; }
+function formatTime(sec) { if(isNaN(sec)) return "0:00"; let m = Math.floor(sec / 60); let s = Math.floor(sec % 60); return m + ':' + (s < 10 ? '0' : '') + s; }
 function escapeHTML(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function shuffleArray(array) { const arr = [...array]; for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[arr[i], arr[j]] = [arr[j], arr[i]]; } return arr; }
 
-function skeletonGrid(count=8) {
-  return Array.from({length:count}).map(()=>`<div class="skeleton-card"><div class="skeleton skeleton-thumb"></div><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-lines"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div></div>`).join('');
-}
+function skeletonGrid(count=8) { return Array.from({length:count}).map(()=>`<div class="skeleton-card"><div class="skeleton skeleton-thumb"></div><div class="skeleton-row"><div class="skeleton skeleton-avatar"></div><div class="skeleton-lines"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div></div>`).join(''); }
 
-async function videoCardHTML(v) {
-  const ch = await getChannelInfo(v.channelId);
-  return `<div class="video-card" onclick="watchVideo('${v.id}')">
-    <div class="thumb-wrap">
-      <img src="${v.thumbnail||THUMB_PLACEHOLDERS[0]}" alt="${escapeHTML(v.title)}" loading="lazy"/>
-      <div class="duration-badge">${v.duration||'--:--'}</div>
-    </div>
-    <div class="video-info">
-      <div class="channel-avatar" onclick="navigate('channel',{channelId:'${v.channelId}'}); event.stopPropagation();"><img src="${ch.avatar}" alt="" loading="lazy"/></div>
-      <div class="video-meta">
-        <div class="video-title">${escapeHTML(v.title)}</div>
-        <div class="video-channel" onclick="navigate('channel',{channelId:'${v.channelId}'}); event.stopPropagation();">${escapeHTML(ch.name)}</div>
-        <div class="video-stats">${v.views||0} views · ${timeAgo(v.uploadDate)}</div>
-      </div>
-    </div>
-  </div>`;
-}
+async function videoCardHTML(v) { const ch = await getChannelInfo(v.channelId); return `<div class="video-card" onclick="watchVideo('${v.id}')"><div class="thumb-wrap"><img src="${v.thumbnail||THUMB_PLACEHOLDERS[0]}" alt="${escapeHTML(v.title)}" loading="lazy"/><div class="duration-badge">${v.duration||'--:--'}</div></div><div class="video-info"><div class="channel-avatar" onclick="navigate('channel',{channelId:'${v.channelId}'}); event.stopPropagation();"><img src="${ch.avatar}" alt="" loading="lazy"/></div><div class="video-meta"><div class="video-title">${escapeHTML(v.title)}</div><div class="video-channel" onclick="navigate('channel',{channelId:'${v.channelId}'}); event.stopPropagation();">${escapeHTML(ch.name)}</div><div class="video-stats">${v.views||0} views · ${timeAgo(v.uploadDate)}</div></div></div></div>`; }
+async function renderVideoGrid(containerId, videos) { const grid = document.getElementById(containerId); if (!grid) return; if (!videos.length) { grid.innerHTML='<p style="color:var(--text2);grid-column:1/-1;">No videos yet.</p>'; return; } const cards = await Promise.all(videos.map(v=>videoCardHTML(v))); grid.innerHTML = cards.join(''); }
 
-async function renderVideoGrid(containerId, videos) {
-  const grid = document.getElementById(containerId);
-  if (!grid) return;
-  if (!videos.length) { grid.innerHTML='<p style="color:var(--text2);grid-column:1/-1;">No videos yet.</p>'; return; }
-  const cards = await Promise.all(videos.map(v=>videoCardHTML(v)));
-  grid.innerHTML = cards.join('');
-}
-
-/* LIKES, VIEWS, COMMENTS UTILS */
 async function toggleLike(videoId, btnId, isShort = false) {
-  if (!State.currentUser) { return toast('Please sign in to like', 'error'); }
-  const videos = await getVideos();
-  const v = videos.find(x => x.id === videoId);
-  if(!v) return;
-
-  v.likes = v.likes || [];
-  const hasLiked = v.likes.includes(State.currentUser.uid);
-  
-  if(hasLiked) {
-     v.likes = v.likes.filter(id => id !== State.currentUser.uid);
-  } else {
-     v.likes.push(State.currentUser.uid);
-  }
-  
+  if (!State.currentUser) return toast('Please sign in to like', 'error');
+  const videos = await getVideos(); const v = videos.find(x => x.id === videoId); if(!v) return;
+  v.likes = v.likes || []; const hasLiked = v.likes.includes(State.currentUser.uid);
+  if(hasLiked) v.likes = v.likes.filter(id => id !== State.currentUser.uid); else v.likes.push(State.currentUser.uid);
   await updateVideoInDB(videoId, { likes: v.likes });
-  
   const btn = document.getElementById(btnId);
   if(btn) {
-     if(isShort) {
-       btn.classList.toggle('liked', !hasLiked);
-       const span = btn.querySelector('span');
-       if(span) span.innerText = v.likes.length || 'Like';
-     } else {
-       btn.classList.toggle('liked', !hasLiked);
-       btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg> ${v.likes.length} ${!hasLiked?'Liked':'Like'}`;
-     }
+     if(isShort) { btn.classList.toggle('liked', !hasLiked); const span = btn.querySelector('span'); if(span) span.innerText = v.likes.length || 'Like'; } 
+     else { btn.classList.toggle('liked', !hasLiked); btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg> ${v.likes.length} ${!hasLiked?'Liked':'Like'}`; }
   }
 }
 
-function handleCommentClick() {
-  // Scroll to comments section
-  const el = document.getElementById('comments-section');
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    const textarea = el.querySelector('textarea');
-    if (textarea) setTimeout(() => textarea.focus(), 500);
-  }
-}
-
+function handleCommentClick() { const el = document.getElementById('comments-section'); if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); const textarea = el.querySelector('textarea'); if (textarea) setTimeout(() => textarea.focus(), 500); } }
 async function incrementView(videoObj) {
-  if(!State.currentUser) return; // Only count views for logged in users as per logic constraint
-  videoObj.viewedBy = videoObj.viewedBy || [];
-  if(videoObj.viewedBy.includes(State.currentUser.uid)) return; // Already viewed by this user
-
-  videoObj.viewedBy.push(State.currentUser.uid);
-  videoObj.views = (videoObj.views || 0) + 1;
-  
+  if(!State.currentUser) return; videoObj.viewedBy = videoObj.viewedBy || []; if(videoObj.viewedBy.includes(State.currentUser.uid)) return;
+  videoObj.viewedBy.push(State.currentUser.uid); videoObj.views = (videoObj.views || 0) + 1;
   await updateVideoInDB(videoObj.id, { viewedBy: videoObj.viewedBy, views: videoObj.views });
-  
-  // Update UI if on Watch page
-  const metaEl = document.getElementById('watch-meta');
-  if(metaEl && State.currentVideo && State.currentVideo.id === videoObj.id) {
-     metaEl.innerHTML = `<span style="color:var(--text2);">${videoObj.views} views · ${timeAgo(videoObj.uploadDate)}</span> <span style="background:var(--bg3);padding:4px 10px;border-radius:12px;font-size:12px;">${videoObj.category||'General'}</span>`;
-  }
+  const metaEl = document.getElementById('watch-meta'); if(metaEl && State.currentVideo && State.currentVideo.id === videoObj.id) { metaEl.innerHTML = `<span style="color:var(--text2);">${videoObj.views} views · ${timeAgo(videoObj.uploadDate)}</span> <span style="background:var(--bg3);padding:4px 10px;border-radius:12px;font-size:12px;">${videoObj.category||'General'}</span>`; }
 }
 
-/* FULLSCREEN EXIT DYNAMIC ICON FIX */
 function toggleFullscreen() {
-   const container = document.getElementById('custom-player-container');
-   const video = document.getElementById('main-video-player');
-   
-   const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || container.classList.contains('pseudo-fullscreen');
-   
-   if (!isFullscreen) {
-      if (container.requestFullscreen) {
-         container.requestFullscreen().catch(() => container.classList.add('pseudo-fullscreen'));
-      } else if (container.webkitRequestFullscreen) {
-         container.webkitRequestFullscreen();
-      } else if (video.webkitEnterFullscreen) {
-         video.webkitEnterFullscreen();
-      } else {
-         container.classList.add('pseudo-fullscreen');
-      }
-   } else {
-      if (document.exitFullscreen && document.fullscreenElement) {
-         document.exitFullscreen();
-      } else if (document.webkitExitFullscreen && document.webkitFullscreenElement) {
-         document.webkitExitFullscreen();
-      }
-      container.classList.remove('pseudo-fullscreen');
-   }
-   updateFullscreenIcon();
+   const container = document.getElementById('custom-player-container'); const video = document.getElementById('main-video-player'); const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || container.classList.contains('pseudo-fullscreen');
+   if (!isFullscreen) { if (container.requestFullscreen) container.requestFullscreen().catch(() => container.classList.add('pseudo-fullscreen')); else container.classList.add('pseudo-fullscreen'); } 
+   else { if (document.exitFullscreen && document.fullscreenElement) document.exitFullscreen(); container.classList.remove('pseudo-fullscreen'); } updateFullscreenIcon();
 }
-
-// Listen to fullscreen changes to update icon dynamically
 document.addEventListener('fullscreenchange', updateFullscreenIcon);
-document.addEventListener('webkitfullscreenchange', updateFullscreenIcon);
-function updateFullscreenIcon() {
-   const btn = document.getElementById('c-full-btn');
-   const container = document.getElementById('custom-player-container');
-   if(!btn) return;
-   if (document.fullscreenElement || document.webkitFullscreenElement || (container && container.classList.contains('pseudo-fullscreen'))) {
-       btn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>`;
-       btn.title = "Exit Fullscreen";
-   } else {
-       btn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>`;
-       btn.title = "Fullscreen";
-   }
-}
+function updateFullscreenIcon() { const btn = document.getElementById('c-full-btn'); const container = document.getElementById('custom-player-container'); if(!btn) return; if (document.fullscreenElement || (container && container.classList.contains('pseudo-fullscreen'))) { btn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>`; } else { btn.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>`; } }
 
-/* HOME */
-async function renderHome() {
-  const grid = document.getElementById('home-grid');
-  grid.innerHTML = skeletonGrid(8);
-  const videos = await getVideos();
-  let approvedVideos = videos.filter(v => v.status === 'approved');
-  
-  let filtered = State.currentCategory==='All' ? approvedVideos : approvedVideos.filter(v=>v.category===State.currentCategory);
-  filtered = filtered.filter(v => v.type !== 'short');
-  filtered = shuffleArray(filtered);
+async function renderHome() { const grid = document.getElementById('home-grid'); grid.innerHTML = skeletonGrid(8); const videos = await getVideos(); let approvedVideos = videos.filter(v => v.status === 'approved'); let filtered = State.currentCategory==='All' ? approvedVideos : approvedVideos.filter(v=>v.category===State.currentCategory); filtered = filtered.filter(v => v.type !== 'short'); filtered = shuffleArray(filtered); await renderVideoGrid('home-grid', filtered); }
+function filterCategory(cat) { State.currentCategory = cat; document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c.textContent.trim()===cat||(cat==='All'&&c.textContent.trim()==='All'))); if (State.currentPage!=='home') navigate('home'); else renderHome(); }
 
-  await renderVideoGrid('home-grid', filtered);
-}
-function filterCategory(cat) {
-  State.currentCategory = cat;
-  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active', c.textContent.trim()===cat||(cat==='All'&&c.textContent.trim()==='All')));
-  if (State.currentPage!=='home') navigate('home'); else renderHome();
-}
-
-/* CHANNEL PAGE */
 async function renderChannel(channelId) {
-   if(!channelId) return;
-   showSpinner();
-   const ch = await getChannelInfo(channelId);
-   
-   document.getElementById('channel-page-cover').style.background = `linear-gradient(45deg, var(--bg3), var(--accent))`;
-   document.getElementById('channel-page-avatar').src = ch.avatar;
-   document.getElementById('channel-page-name').textContent = ch.name;
-
-   const sBtn = document.getElementById('channel-page-sub-btn');
-   const subbed = State.subscriptions.includes(channelId);
-   sBtn.textContent = subbed ? '✓ Subscribed' : 'Subscribe';
-   sBtn.className = 'sub-btn ' + (subbed ? 'subscribed' : '');
-   sBtn.onclick = () => toggleSub(channelId, sBtn);
-
-   const videos = await getVideos();
-   let chVids = videos.filter(v => v.channelId === channelId && v.status === 'approved');
-   
-   await renderVideoGrid('channel-video-grid', chVids);
-   hideSpinner();
+   if(!channelId) return; showSpinner(); const ch = await getChannelInfo(channelId);
+   document.getElementById('channel-page-cover').style.background = `linear-gradient(45deg, var(--bg3), var(--accent))`; document.getElementById('channel-page-avatar').src = ch.avatar; document.getElementById('channel-page-name').textContent = ch.name;
+   const sBtn = document.getElementById('channel-page-sub-btn'); const subbed = State.subscriptions.includes(channelId); sBtn.textContent = subbed ? '✓ Subscribed' : 'Subscribe'; sBtn.className = 'sub-btn ' + (subbed ? 'subscribed' : ''); sBtn.onclick = () => toggleSub(channelId, sBtn);
+   const videos = await getVideos(); let chVids = videos.filter(v => v.channelId === channelId && v.status === 'approved'); await renderVideoGrid('channel-video-grid', chVids); hideSpinner();
 }
 
-/* WATCH (Custom Player) */
-function skipVideo(amount, zoneElement) {
-   const video = document.getElementById('main-video-player');
-   if(video) {
-      video.currentTime += amount;
-      zoneElement.textContent = amount > 0 ? "+10s" : "-10s";
-      setTimeout(()=> zoneElement.textContent="", 300);
-   }
-}
-
+function skipVideo(amount, zoneElement) { const video = document.getElementById('main-video-player'); if(video) { video.currentTime += amount; zoneElement.textContent = amount > 0 ? "+10s" : "-10s"; setTimeout(()=> zoneElement.textContent="", 300); } }
 function watchVideo(videoId) { navigate('watch',{videoId}); }
 
 async function renderWatch({videoId}={}) {
-  if (!videoId) return;
-  showSpinner("Loading video...");
-  const videos = await getVideos();
-  const v = videos.find(x=>x.id===videoId);
-  if (!v) { hideSpinner(); toast('Video not found','error'); return; }
+  if (!videoId) return; showSpinner("Loading video..."); const videos = await getVideos(); const v = videos.find(x=>x.id===videoId); if (!v) { hideSpinner(); return toast('Video not found','error'); }
+  State.currentVideo = v; addToHistory(v); v.likes = v.likes || []; const hasLiked = State.currentUser && v.likes.includes(State.currentUser.uid);
+
+  // Auto handle invalid/drive links for HTML5 Player gracefully
+  let finalVideoLink = v.driveLink || "";
   
-  State.currentVideo = v;
-  addToHistory(v);
-
-  v.likes = v.likes || [];
-  const hasLiked = State.currentUser && v.likes.includes(State.currentUser.uid);
-
-  // Custom Video Player HTML
   document.getElementById('player-wrap').innerHTML = `
     <div class="custom-player-container" id="custom-player-container">
-      <video id="main-video-player" src="${v.driveLink}" playsinline autoplay></video>
-      
-      <!-- 10s Skip Zones -->
-      <div class="long-skip-zone long-skip-left" ondblclick="skipVideo(-10, this)"></div>
-      <div class="long-skip-zone long-skip-right" ondblclick="skipVideo(10, this)"></div>
-
+      <video id="main-video-player" src="${finalVideoLink}" playsinline autoplay onerror="this.parentElement.innerHTML='<div style=\\'color:#ff3b3b;padding:20px;text-align:center;\\'>Video format not supported or link broken.</div>'"></video>
+      <div class="long-skip-zone long-skip-left" ondblclick="skipVideo(-10, this)"></div><div class="long-skip-zone long-skip-right" ondblclick="skipVideo(10, this)"></div>
       <div class="custom-player-controls" id="custom-player-controls">
-         <div class="c-progress-container" id="c-progress-container">
-            <div class="c-progress-filled" id="c-progress-filled"></div>
-         </div>
+         <div class="c-progress-container" id="c-progress-container"><div class="c-progress-filled" id="c-progress-filled"></div></div>
          <div class="c-controls-row">
-            <div class="c-controls-left">
-               <button class="c-btn" id="c-play-btn">
-                  <svg id="icon-play" style="display:none;" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                  <svg id="icon-pause" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-               </button>
-               <div class="c-time"><span id="c-time-current">0:00</span> / <span id="c-time-total">${v.duration||'0:00'}</span></div>
-            </div>
-            <div class="c-controls-right">
-               <select class="c-speed-select" id="c-speed-select" title="Playback Speed">
-                  <option value="0.5">0.5x</option>
-                  <option value="1" selected>1x</option>
-                  <option value="1.5">1.5x</option>
-                  <option value="2">2x</option>
-               </select>
-               <button class="c-btn" id="c-full-btn" title="Fullscreen" onclick="toggleFullscreen()">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-               </button>
-            </div>
+            <div class="c-controls-left"><button class="c-btn" id="c-play-btn"><svg id="icon-play" style="display:none;" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg><svg id="icon-pause" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button><div class="c-time"><span id="c-time-current">0:00</span> / <span id="c-time-total">${v.duration||'0:00'}</span></div></div>
+            <div class="c-controls-right"><select class="c-speed-select" id="c-speed-select" title="Playback Speed"><option value="0.5">0.5x</option><option value="1" selected>1x</option><option value="1.5">1.5x</option><option value="2">2x</option></select><button class="c-btn" id="c-full-btn" title="Fullscreen" onclick="toggleFullscreen()"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button></div>
          </div>
       </div>
-    </div>
-  `;
+    </div>`;
 
   document.getElementById('player-controls').innerHTML = `
-    <button class="ctrl-btn ${hasLiked?'liked':''}" id="watch-like-btn" onclick="toggleLike('${v.id}', 'watch-like-btn', false)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
-      ${v.likes.length || 'Like'}
-    </button>
-    <button class="ctrl-btn" onclick="handleCommentClick()">
-       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-       Comment
-    </button>
-    <button class="ctrl-btn" onclick="toggleWatchLater('${v.id}')">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
-      Save
-    </button>
-  `;
+    <button class="ctrl-btn ${hasLiked?'liked':''}" id="watch-like-btn" onclick="toggleLike('${v.id}', 'watch-like-btn', false)"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg> ${v.likes.length || 'Like'}</button>
+    <button class="ctrl-btn" onclick="handleCommentClick()">Comment</button>
+    <button class="ctrl-btn" onclick="toggleWatchLater('${v.id}')">Save</button>`;
 
   document.getElementById('watch-title').textContent = v.title;
   document.getElementById('watch-meta').innerHTML = `<span style="color:var(--text2);">${v.views||0} views · ${timeAgo(v.uploadDate)}</span> <span style="background:var(--bg3);padding:4px 10px;border-radius:12px;font-size:12px;">${v.category||'General'}</span>`;
   document.getElementById('watch-desc').textContent = v.description||'No description provided.';
   
-  const ch = await getChannelInfo(v.channelId);
-  const subbed = State.subscriptions.includes(ch.id);
-  document.getElementById('watch-channel-row').innerHTML = `
-    <div class="watch-channel-info" onclick="navigate('channel',{channelId:'${ch.id}'})">
-      <div class="watch-ch-avatar"><img src="${ch.avatar}" alt=""/></div>
-      <div><div class="watch-ch-name">${escapeHTML(ch.name)}</div></div>
-    </div>
-    <button class="sub-btn ${subbed?'subscribed':''}" id="watch-sub-btn" onclick="toggleSub('${ch.id}', this)">${subbed?'✓ Subscribed':'Subscribe'}</button>
-  `;
+  const ch = await getChannelInfo(v.channelId); const subbed = State.subscriptions.includes(ch.id);
+  document.getElementById('watch-channel-row').innerHTML = `<div class="watch-channel-info" onclick="navigate('channel',{channelId:'${ch.id}'})"><div class="watch-ch-avatar"><img src="${ch.avatar}" alt=""/></div><div><div class="watch-ch-name">${escapeHTML(ch.name)}</div></div></div><button class="sub-btn ${subbed?'subscribed':''}" id="watch-sub-btn" onclick="toggleSub('${ch.id}', this)">${subbed?'✓ Subscribed':'Subscribe'}</button>`;
 
   const others = videos.filter(x=>x.id!==v.id && x.type!=='short' && x.status === 'approved').slice(0,8);
-  const upNextCards = await Promise.all(others.map(async u=>{
-    const uch = await getChannelInfo(u.channelId);
-    return `<div class="mini-card" onclick="watchVideo('${u.id}')"><div class="mini-thumb"><img src="${u.thumbnail||THUMB_PLACEHOLDERS[0]}" alt="" loading="lazy"/><div class="duration-badge">${u.duration||''}</div></div><div class="mini-meta"><div class="mini-title">${escapeHTML(u.title)}</div><div class="mini-channel">${escapeHTML(uch.name)}</div></div></div>`;
-  }));
+  const upNextCards = await Promise.all(others.map(async u=>{ const uch = await getChannelInfo(u.channelId); return `<div class="mini-card" onclick="watchVideo('${u.id}')"><div class="mini-thumb"><img src="${u.thumbnail||THUMB_PLACEHOLDERS[0]}" alt="" loading="lazy"/><div class="duration-badge">${u.duration||''}</div></div><div class="mini-meta"><div class="mini-title">${escapeHTML(u.title)}</div><div class="mini-channel">${escapeHTML(uch.name)}</div></div></div>`; }));
   document.getElementById('up-next-list').innerHTML = upNextCards.join('');
   
-  initCustomPlayer(v);
-  hideSpinner();
-  // Load comments
-  await loadComments(videoId);
+  initCustomPlayer(v); hideSpinner(); await loadComments(videoId);
 }
 
-// Custom Player Logic + View Count tracking (20s Long)
 function initCustomPlayer(videoObj) {
-   const video = document.getElementById('main-video-player');
-   const container = document.getElementById('custom-player-container');
-   const playBtn = document.getElementById('c-play-btn');
-   const iconPlay = document.getElementById('icon-play');
-   const iconPause = document.getElementById('icon-pause');
-   const progressBar = document.getElementById('c-progress-container');
-   const progressFilled = document.getElementById('c-progress-filled');
-   const timeCurrent = document.getElementById('c-time-current');
-   const timeTotal = document.getElementById('c-time-total');
-   const speedSelect = document.getElementById('c-speed-select');
-
-   if(!video) return;
-
-   let viewTimer;
-   function togglePlay() {
-      if(video.paused) { 
-         video.play(); container.classList.remove('paused'); iconPlay.style.display='none'; iconPause.style.display='block'; 
-         viewTimer = setTimeout(() => incrementView(videoObj), 20000); // 20s View logic
-      }
-      else { 
-         video.pause(); container.classList.add('paused'); iconPlay.style.display='block'; iconPause.style.display='none'; 
-         clearTimeout(viewTimer);
-      }
-   }
-
-   playBtn.onclick = togglePlay;
-   video.onclick = togglePlay;
-
-   video.addEventListener('timeupdate', () => {
-      const percent = (video.currentTime / video.duration) * 100;
-      progressFilled.style.width = `${percent}%`;
-      timeCurrent.textContent = formatTime(video.currentTime);
-   });
-
-   video.addEventListener('loadedmetadata', () => {
-      timeTotal.textContent = formatTime(video.duration);
-   });
-
-   progressBar.addEventListener('click', (e) => {
-      const rect = progressBar.getBoundingClientRect();
-      const pos = (e.clientX - rect.left) / rect.width;
-      video.currentTime = pos * video.duration;
-   });
-
-   speedSelect.addEventListener('change', (e) => {
-      video.playbackRate = e.target.value;
-   });
+   const video = document.getElementById('main-video-player'); const container = document.getElementById('custom-player-container'); const playBtn = document.getElementById('c-play-btn'); const iconPlay = document.getElementById('icon-play'); const iconPause = document.getElementById('icon-pause'); const progressBar = document.getElementById('c-progress-container'); const progressFilled = document.getElementById('c-progress-filled'); const timeCurrent = document.getElementById('c-time-current'); const timeTotal = document.getElementById('c-time-total'); const speedSelect = document.getElementById('c-speed-select');
+   if(!video) return; let viewTimer;
+   function togglePlay() { if(video.paused) { video.play(); container.classList.remove('paused'); iconPlay.style.display='none'; iconPause.style.display='block'; viewTimer = setTimeout(() => incrementView(videoObj), 20000); } else { video.pause(); container.classList.add('paused'); iconPlay.style.display='block'; iconPause.style.display='none'; clearTimeout(viewTimer); } }
+   playBtn.onclick = togglePlay; video.onclick = togglePlay;
+   video.addEventListener('timeupdate', () => { if(isNaN(video.duration)) return; const percent = (video.currentTime / video.duration) * 100; progressFilled.style.width = `${percent}%`; timeCurrent.textContent = formatTime(video.currentTime); });
+   video.addEventListener('loadedmetadata', () => { timeTotal.textContent = formatTime(video.duration); });
+   progressBar.addEventListener('click', (e) => { if(isNaN(video.duration)) return; const rect = progressBar.getBoundingClientRect(); const pos = (e.clientX - rect.left) / rect.width; video.currentTime = pos * video.duration; });
+   speedSelect.addEventListener('change', (e) => { video.playbackRate = e.target.value; });
 }
 
-/* SHORTS (Sound Enabled, Double Tap Skip, Views & Likes, Click to Pause) */
-function skipShort(videoObj, amount, zoneElement) {
-   if(videoObj) {
-      videoObj.currentTime += amount;
-      zoneElement.textContent = amount > 0 ? "+10s" : "-10s";
-      setTimeout(()=> zoneElement.textContent="", 300);
-   }
-}
-
-function toggleShortPlay(vid) {
-   if(vid.paused) vid.play(); else vid.pause();
-}
+function skipShort(videoObj, amount, zoneElement) { if(videoObj) { videoObj.currentTime += amount; zoneElement.textContent = amount > 0 ? "+10s" : "-10s"; setTimeout(()=> zoneElement.textContent="", 300); } }
+function toggleShortPlay(vid) { if(vid.paused) vid.play(); else vid.pause(); }
 
 async function renderShorts() {
-  const container = document.getElementById('shorts-container');
-  const videos = await getVideos();
-  let shorts = videos.filter(v=>v.type==='short' && v.status === 'approved');
-  shorts = shuffleArray(shorts); 
-
+  const container = document.getElementById('shorts-container'); const videos = await getVideos(); let shorts = videos.filter(v=>v.type==='short' && v.status === 'approved'); shorts = shuffleArray(shorts); 
   if (!shorts.length) { container.innerHTML='<div style="height:100%;display:flex;align-items:center;justify-content:center;color:var(--text2);flex-direction:column;gap:12px;"><p>No Shorts uploaded yet</p></div>'; return; }
   
   const items = await Promise.all(shorts.map(async(v,i)=>{
-    const ch = await getChannelInfo(v.channelId);
-    v.likes = v.likes || [];
-    const hasLiked = State.currentUser && v.likes.includes(State.currentUser.uid);
-    
-    return `<div class="short-item">
-      <div class="short-video">
-        <video id="short-vid-${i}" src="${v.driveLink}" ${i===0?'autoplay':''} loop playsinline onclick="toggleShortPlay(this)"></video>
-        
-        <div class="short-skip-zone short-skip-left" ondblclick="skipShort(document.getElementById('short-vid-${i}'), -10, this)"></div>
-        <div class="short-skip-zone short-skip-right" ondblclick="skipShort(document.getElementById('short-vid-${i}'), 10, this)"></div>
-
-        <div class="short-overlay">
-          <div class="short-channel" onclick="navigate('channel',{channelId:'${ch.id}'})">
-            <img src="${ch.avatar}" alt=""/>
-            <span class="short-channel-name">${escapeHTML(ch.name)}</span>
-          </div>
-          <div class="short-title">${escapeHTML(v.title)}</div>
-        </div>
-        
-        <!-- Short Actions added: Like, Comment, View stats -->
-        <div class="short-actions">
-           <div class="short-action ${hasLiked?'liked':''}" id="short-like-${v.id}" onclick="toggleLike('${v.id}', 'short-like-${v.id}', true)">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
-              <span>${v.likes.length || 'Like'}</span>
-           </div>
-           <div class="short-action" onclick="handleCommentClick()">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M21.99 4c0-1.1-.89-2-1.99-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h14l4 4-.01-18zM18 14H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-              <span>Comment</span>
-           </div>
-           <div class="short-action">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-              <span>${v.views || 0}</span>
-           </div>
-        </div>
-        
-        <div class="short-progress-bar">
-           <div class="short-progress-filled" id="short-prog-${i}"></div>
-        </div>
-      </div>
-    </div>`;
+    const ch = await getChannelInfo(v.channelId); v.likes = v.likes || []; const hasLiked = State.currentUser && v.likes.includes(State.currentUser.uid);
+    return `<div class="short-item"><div class="short-video"><video id="short-vid-${i}" src="${v.driveLink}" ${i===0?'autoplay':''} loop playsinline onclick="toggleShortPlay(this)"></video><div class="short-skip-zone short-skip-left" ondblclick="skipShort(document.getElementById('short-vid-${i}'), -10, this)"></div><div class="short-skip-zone short-skip-right" ondblclick="skipShort(document.getElementById('short-vid-${i}'), 10, this)"></div><div class="short-overlay"><div class="short-channel" onclick="navigate('channel',{channelId:'${ch.id}'})"><img src="${ch.avatar}" alt=""/><span class="short-channel-name">${escapeHTML(ch.name)}</span></div><div class="short-title">${escapeHTML(v.title)}</div></div><div class="short-actions"><div class="short-action ${hasLiked?'liked':''}" id="short-like-${v.id}" onclick="toggleLike('${v.id}', 'short-like-${v.id}', true)"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg><span>${v.likes.length || 'Like'}</span></div><div class="short-action" onclick="handleCommentClick()"><span>Comment</span></div><div class="short-action"><span>${v.views || 0}</span></div></div><div class="short-progress-bar"><div class="short-progress-filled" id="short-prog-${i}"></div></div></div></div>`;
   }));
   container.innerHTML = items.join('');
 
   let shortViewTimers = {};
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      const vid = entry.target.querySelector('video');
-      const vData = shorts[parseInt(vid.id.replace('short-vid-',''))];
-      if (entry.isIntersecting) { 
-         if(vid) vid.play().catch(()=>{}); 
-         shortViewTimers[vData.id] = setTimeout(() => incrementView(vData), 3000); // 3 seconds logic for shorts
-      }
-      else { 
-         if(vid) vid.pause(); 
-         clearTimeout(shortViewTimers[vData.id]);
-      }
-    });
-  }, { threshold: 0.6 });
-
-  document.querySelectorAll('.short-item').forEach((el, index) => {
-     observer.observe(el);
-     const vid = el.querySelector('video');
-     const prog = el.querySelector(`#short-prog-${index}`);
-     if(vid && prog) {
-        vid.addEventListener('timeupdate', () => {
-           const pct = (vid.currentTime / vid.duration) * 100;
-           prog.style.width = pct + '%';
-        });
-     }
-  });
+  const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { const vid = entry.target.querySelector('video'); const vData = shorts[parseInt(vid.id.replace('short-vid-',''))]; if (entry.isIntersecting) { if(vid) vid.play().catch(()=>{}); shortViewTimers[vData.id] = setTimeout(() => incrementView(vData), 3000); } else { if(vid) vid.pause(); clearTimeout(shortViewTimers[vData.id]); } }); }, { threshold: 0.6 });
+  document.querySelectorAll('.short-item').forEach((el, index) => { observer.observe(el); const vid = el.querySelector('video'); const prog = el.querySelector(`#short-prog-${index}`); if(vid && prog) { vid.addEventListener('timeupdate', () => { const pct = (vid.currentTime / vid.duration) * 100; prog.style.width = pct + '%'; }); } });
 }
 
-/* LIBRARY & HISTORY */
-async function toggleWatchLater(videoId) {
-  if (!State.currentUser) { toast('Please log in','error'); return; }
-  const idx = State.watchLater.findIndex(v=>v.id===videoId);
-  if (idx>-1) { State.watchLater.splice(idx,1); toast('Removed from Watch Later'); }
-  else { const videos = await getVideos(); const v = videos.find(x=>x.id===videoId); if(v){ State.watchLater.push(v); toast('Saved to Watch Later','success'); } }
-  saveUserData();
-}
-
-async function renderLibrary() {
-  const wlGrid = document.getElementById('watch-later-grid');
-  if (State.watchLater.length) await renderVideoGrid('watch-later-grid', State.watchLater); else wlGrid.innerHTML='<p style="color:var(--text2)">Nothing saved yet.</p>';
-}
-
-function addToHistory(v) {
-  State.history = State.history.filter(h=>h.id!==v.id);
-  State.history.unshift({...v, watchedAt:new Date().toISOString()});
-  if (State.history.length>50) State.history.pop();
-  saveUserData();
-}
-
-async function renderHistoryPage() {
-  const grid = document.getElementById('history-grid');
-  if (!State.history.length) { grid.innerHTML='<p style="color:var(--text2)">No watch history yet.</p>'; return; }
-  await renderVideoGrid('history-grid', State.history);
-}
-
+async function toggleWatchLater(videoId) { if (!State.currentUser) return toast('Please log in','error'); const idx = State.watchLater.findIndex(v=>v.id===videoId); if (idx>-1) { State.watchLater.splice(idx,1); toast('Removed from Watch Later'); } else { const videos = await getVideos(); const v = videos.find(x=>x.id===videoId); if(v){ State.watchLater.push(v); toast('Saved','success'); } } saveUserData(); }
+async function renderLibrary() { const wlGrid = document.getElementById('watch-later-grid'); if (State.watchLater.length) await renderVideoGrid('watch-later-grid', State.watchLater); else wlGrid.innerHTML='<p style="color:var(--text2)">Nothing saved yet.</p>'; }
+function addToHistory(v) { State.history = State.history.filter(h=>h.id!==v.id); State.history.unshift({...v, watchedAt:new Date().toISOString()}); if (State.history.length>50) State.history.pop(); saveUserData(); }
+async function renderHistoryPage() { const grid = document.getElementById('history-grid'); if (!State.history.length) return grid.innerHTML='<p style="color:var(--text2)">No watch history yet.</p>'; await renderVideoGrid('history-grid', State.history); }
 function clearHistory() { State.history=[]; renderHistoryPage(); saveUserData(); toast('History cleared'); }
+async function toggleSub(channelId, buttonEl = null) { if (!State.currentUser) return toast('Sign in to subscribe','error'); const idx = State.subscriptions.indexOf(channelId); if (idx>-1) { State.subscriptions.splice(idx,1); toast('Unsubscribed'); } else { State.subscriptions.push(channelId); toast('Subscribed!','success'); } saveUserData(); let sBtn = buttonEl || document.getElementById('watch-sub-btn'); if (sBtn) { sBtn.textContent = State.subscriptions.includes(channelId) ? '✓ Subscribed' : 'Subscribe'; sBtn.className = 'sub-btn ' + (State.subscriptions.includes(channelId) ? 'subscribed' : ''); } }
 
-async function toggleSub(channelId, buttonEl = null) {
-  if (!State.currentUser) { toast('Sign in to subscribe','error'); return; }
-  const idx = State.subscriptions.indexOf(channelId);
-  if (idx>-1) { State.subscriptions.splice(idx,1); toast('Unsubscribed'); }
-  else { State.subscriptions.push(channelId); toast('Subscribed!','success'); }
-  saveUserData();
-  
-  let sBtn = buttonEl || document.getElementById('watch-sub-btn');
-  if (sBtn) {
-    sBtn.textContent = State.subscriptions.includes(channelId) ? '✓ Subscribed' : 'Subscribe';
-    sBtn.className = 'sub-btn ' + (State.subscriptions.includes(channelId) ? 'subscribed' : '');
-  }
-}
+let commentsPage = 0; const COMMENTS_PER_PAGE = 10; let allComments = []; let currentVideoIdForComments = null;
+async function loadComments(videoId) { currentVideoIdForComments = videoId; commentsPage = 0; allComments = []; const inputArea = document.getElementById('comment-input-area'); if (State.currentUser) { const seed = encodeURIComponent(State.currentUser.displayName||State.currentUser.uid); inputArea.innerHTML = `<div class="comment-input-wrap"><div class="comment-input-avatar"><img src="https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundColor=ff3b3b&textColor=ffffff" alt=""/></div><div class="comment-input-box"><textarea id="comment-textarea" placeholder="Add a comment..." rows="1" oninput="handleCommentInput(this)" onkeydown="if(event.ctrlKey&&event.key==='Enter')postComment('${videoId}')"></textarea><div class="comment-input-actions" id="comment-input-actions" style="display:none;"><button class="comment-cancel-btn" onclick="cancelComment()">Cancel</button><button class="comment-submit-btn" id="comment-submit-btn" onclick="postComment('${videoId}')">Comment</button></div></div></div>`; } else { inputArea.innerHTML = `<div class="comment-signin-prompt"><a onclick="navigate('auth')">Sign in</a> to leave a comment.</div>`; } const data = await cloudGet('comments_'+videoId); allComments = data || []; renderCommentList(); }
+function handleCommentInput(textarea) { const actions = document.getElementById('comment-input-actions'); const submitBtn = document.getElementById('comment-submit-btn'); if (textarea.value.trim()) { if(actions) actions.style.display = 'flex'; if(submitBtn) submitBtn.classList.add('active'); } else { if(submitBtn) submitBtn.classList.remove('active'); } textarea.style.height = 'auto'; textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'; }
+function cancelComment() { const ta = document.getElementById('comment-textarea'); const actions = document.getElementById('comment-input-actions'); if(ta) { ta.value = ''; ta.style.height = 'auto'; } if(actions) actions.style.display = 'none'; const submitBtn = document.getElementById('comment-submit-btn'); if(submitBtn) submitBtn.classList.remove('active'); }
+async function postComment(videoId) { if (!State.currentUser) return toast('Sign in to comment','error'); const ta = document.getElementById('comment-textarea'); if (!ta) return; const text = ta.value.trim(); if (!text) return; const comment = { id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2,5), videoId, userId: State.currentUser.uid, userName: State.currentUser.displayName || State.currentUser.uid, text: escapeHTML(text), createdAt: new Date().toISOString(), likes: [] }; allComments.unshift(comment); await cloudSet('comments_'+videoId, allComments); cancelComment(); renderCommentList(); toast('Comment posted!','success'); }
+async function deleteComment(commentId, videoId) { if (!State.currentUser || !confirm('Delete this comment?')) return; allComments = allComments.filter(c => c.id !== commentId); await cloudSet('comments_'+videoId, allComments); renderCommentList(); toast('Comment deleted'); }
+async function likeComment(commentId, videoId) { if (!State.currentUser) return toast('Sign in to like','error'); const c = allComments.find(x => x.id === commentId); if (!c) return; c.likes = c.likes || []; const idx = c.likes.indexOf(State.currentUser.uid); if (idx > -1) c.likes.splice(idx, 1); else c.likes.push(State.currentUser.uid); await cloudSet('comments_'+videoId, allComments); renderCommentList(); }
+function renderCommentList() { const list = document.getElementById('comment-list'); const title = document.getElementById('comments-count-title'); const loadMore = document.getElementById('comment-load-more'); if (!list) return; if (title) title.textContent = allComments.length + ' Comment' + (allComments.length !== 1 ? 's' : ''); const visible = allComments.slice(0, (commentsPage+1)*COMMENTS_PER_PAGE); if (!allComments.length) { list.innerHTML = '<div style="color:var(--text2);font-size:14px;padding:16px 0;">No comments yet. Be the first to comment!</div>'; if(loadMore) loadMore.style.display = 'none'; return; } list.innerHTML = visible.map(c => { const seed = encodeURIComponent(c.userName); const avatar = `https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundColor=ff3b3b&textColor=ffffff`; const isOwn = State.currentUser && State.currentUser.uid === c.userId; const hasLiked = State.currentUser && (c.likes||[]).includes(State.currentUser.uid); return `<div class="comment-item" id="comment-${c.id}"><div class="comment-avatar"><img src="${avatar}" alt=""/></div><div class="comment-body"><div class="comment-meta"><span class="comment-username">${c.userName}</span><span class="comment-time">${timeAgo(c.createdAt)}</span></div><div class="comment-text">${c.text}</div><div class="comment-actions-row"><button class="comment-like-btn ${hasLiked?'active':''}" onclick="likeComment('${c.id}','${c.videoId}')" style="${hasLiked?'color:var(--accent)':''}">${(c.likes||[]).length || 'Like'}</button>${isOwn ? `<button class="comment-delete-btn" onclick="deleteComment('${c.id}','${c.videoId}')">Delete</button>` : ''}</div></div></div>`; }).join(''); if (loadMore) loadMore.style.display = allComments.length > (commentsPage+1)*COMMENTS_PER_PAGE ? 'block' : 'none'; }
+function loadMoreComments() { commentsPage++; renderCommentList(); }
 
-
-/* =========================================================
-   COMMENT SYSTEM
-========================================================= */
-let commentsPage = 0;
-const COMMENTS_PER_PAGE = 10;
-let allComments = [];
-let currentVideoIdForComments = null;
-
-async function loadComments(videoId) {
-  currentVideoIdForComments = videoId;
-  commentsPage = 0;
-  allComments = [];
-  
-  // Render input area
-  const inputArea = document.getElementById('comment-input-area');
-  if (State.currentUser) {
-    const seed = encodeURIComponent(State.currentUser.displayName||State.currentUser.uid);
-    inputArea.innerHTML = `
-      <div class="comment-input-wrap">
-        <div class="comment-input-avatar">
-          <img src="https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundColor=ff3b3b&textColor=ffffff" alt=""/>
-        </div>
-        <div class="comment-input-box">
-          <textarea id="comment-textarea" placeholder="Add a comment..." rows="1" 
-            oninput="handleCommentInput(this)" onkeydown="if(event.ctrlKey&&event.key==='Enter')postComment('${videoId}')"></textarea>
-          <div class="comment-input-actions" id="comment-input-actions" style="display:none;">
-            <button class="comment-cancel-btn" onclick="cancelComment()">Cancel</button>
-            <button class="comment-submit-btn" id="comment-submit-btn" onclick="postComment('${videoId}')">Comment</button>
-          </div>
-        </div>
-      </div>`;
-  } else {
-    inputArea.innerHTML = `<div class="comment-signin-prompt">
-      <a onclick="navigate('auth')">Sign in</a> to leave a comment.
-    </div>`;
-  }
-  
-  // Load comments from cloud
-  const data = await cloudGet('comments_'+videoId);
-  allComments = data || [];
-  renderCommentList();
-}
-
-function handleCommentInput(textarea) {
-  const actions = document.getElementById('comment-input-actions');
-  const submitBtn = document.getElementById('comment-submit-btn');
-  if (textarea.value.trim()) {
-    if(actions) actions.style.display = 'flex';
-    if(submitBtn) submitBtn.classList.add('active');
-  } else {
-    if(submitBtn) submitBtn.classList.remove('active');
-  }
-  // Auto resize
-  textarea.style.height = 'auto';
-  textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-}
-
-function cancelComment() {
-  const ta = document.getElementById('comment-textarea');
-  const actions = document.getElementById('comment-input-actions');
-  if(ta) { ta.value = ''; ta.style.height = 'auto'; }
-  if(actions) actions.style.display = 'none';
-  const submitBtn = document.getElementById('comment-submit-btn');
-  if(submitBtn) submitBtn.classList.remove('active');
-}
-
-async function postComment(videoId) {
-  if (!State.currentUser) { toast('Sign in to comment','error'); return; }
-  const ta = document.getElementById('comment-textarea');
-  if (!ta) return;
-  const text = ta.value.trim();
-  if (!text) return;
-  
-  const comment = {
-    id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2,5),
-    videoId,
-    userId: State.currentUser.uid,
-    userName: State.currentUser.displayName || State.currentUser.uid,
-    text: escapeHTML(text),
-    createdAt: new Date().toISOString(),
-    likes: []
-  };
-  
-  allComments.unshift(comment);
-  await cloudSet('comments_'+videoId, allComments);
-  cancelComment();
-  renderCommentList();
-  toast('Comment posted!','success');
-  
-  // Update comment count in button
-  updateCommentCountDisplay();
-}
-
-async function deleteComment(commentId, videoId) {
-  if (!State.currentUser) return;
-  if (!confirm('Delete this comment?')) return;
-  
-  allComments = allComments.filter(c => c.id !== commentId);
-  await cloudSet('comments_'+videoId, allComments);
-  renderCommentList();
-  updateCommentCountDisplay();
-  toast('Comment deleted');
-}
-
-async function likeComment(commentId, videoId) {
-  if (!State.currentUser) { toast('Sign in to like','error'); return; }
-  const c = allComments.find(x => x.id === commentId);
-  if (!c) return;
-  c.likes = c.likes || [];
-  const idx = c.likes.indexOf(State.currentUser.uid);
-  if (idx > -1) c.likes.splice(idx, 1); else c.likes.push(State.currentUser.uid);
-  await cloudSet('comments_'+videoId, allComments);
-  renderCommentList();
-}
-
-function renderCommentList() {
-  const list = document.getElementById('comment-list');
-  const title = document.getElementById('comments-count-title');
-  const loadMore = document.getElementById('comment-load-more');
-  if (!list) return;
-  
-  if (title) title.textContent = allComments.length + ' Comment' + (allComments.length !== 1 ? 's' : '');
-  
-  const visible = allComments.slice(0, (commentsPage+1)*COMMENTS_PER_PAGE);
-  
-  if (!allComments.length) {
-    list.innerHTML = '<div style="color:var(--text2);font-size:14px;padding:16px 0;">No comments yet. Be the first to comment!</div>';
-    if(loadMore) loadMore.style.display = 'none';
-    return;
-  }
-  
-  list.innerHTML = visible.map(c => {
-    const seed = encodeURIComponent(c.userName);
-    const avatar = `https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundColor=ff3b3b&textColor=ffffff`;
-    const isOwn = State.currentUser && State.currentUser.uid === c.userId;
-    const hasLiked = State.currentUser && (c.likes||[]).includes(State.currentUser.uid);
-    return `<div class="comment-item" id="comment-${c.id}">
-      <div class="comment-avatar"><img src="${avatar}" alt=""/></div>
-      <div class="comment-body">
-        <div class="comment-meta">
-          <span class="comment-username">${c.userName}</span>
-          <span class="comment-time">${timeAgo(c.createdAt)}</span>
-        </div>
-        <div class="comment-text">${c.text}</div>
-        <div class="comment-actions-row">
-          <button class="comment-like-btn ${hasLiked?'active':''}" onclick="likeComment('${c.id}','${c.videoId}')" style="${hasLiked?'color:var(--accent)':''}">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
-            ${(c.likes||[]).length || ''}
-          </button>
-          ${isOwn ? `<button class="comment-delete-btn" onclick="deleteComment('${c.id}','${c.videoId}')">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-            Delete
-          </button>` : ''}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-  
-  if (loadMore) {
-    loadMore.style.display = allComments.length > (commentsPage+1)*COMMENTS_PER_PAGE ? 'block' : 'none';
-  }
-}
-
-function loadMoreComments() {
-  commentsPage++;
-  renderCommentList();
-}
-
-function updateCommentCountDisplay() {
-  // Update the comment button in player controls
-  const commentBtnEl = document.querySelector('#player-controls .ctrl-btn:nth-child(2)');
-  if (commentBtnEl && allComments.length > 0) {
-    // Keep button text updated
-  }
-}
-
-/* SEARCH */
 function doSearch() { const q = document.getElementById('search-input').value.trim(); if (!q) return; State.currentSearchQuery = q; navigate('search'); }
-async function renderSearch() {
-  const q = State.currentSearchQuery.toLowerCase(); const list = document.getElementById('search-results-list');
-  const videos = await getVideos();
-  const results = videos.filter(v=> v.status === 'approved' && (v.title.toLowerCase().includes(q) || (v.category||'').toLowerCase().includes(q)));
-  list.innerHTML = results.length ? (await Promise.all(results.map(async v=>{ return `<div class="search-result" onclick="watchVideo('${v.id}')" style="display:flex;gap:12px;margin-bottom:12px;cursor:pointer;"><div style="width:200px;flex-shrink:0;"><img style="width:100%;border-radius:8px;aspect-ratio:16/9;object-fit:cover;" src="${v.thumbnail||THUMB_PLACEHOLDERS[0]}"/></div><div><div style="font-weight:600;">${escapeHTML(v.title)}</div><div style="font-size:12px;color:var(--text2);">${v.views||0} views</div></div></div>`; }))).join('') : '<p>No results.</p>';
-}
+async function renderSearch() { const q = State.currentSearchQuery.toLowerCase(); const list = document.getElementById('search-results-list'); const videos = await getVideos(); const results = videos.filter(v=> v.status === 'approved' && (v.title.toLowerCase().includes(q) || (v.category||'').toLowerCase().includes(q))); list.innerHTML = results.length ? (await Promise.all(results.map(async v=>{ return `<div class="search-result" onclick="watchVideo('${v.id}')" style="display:flex;gap:12px;margin-bottom:12px;cursor:pointer;"><div style="width:200px;flex-shrink:0;"><img style="width:100%;border-radius:8px;aspect-ratio:16/9;object-fit:cover;" src="${v.thumbnail||THUMB_PLACEHOLDERS[0]}"/></div><div><div style="font-weight:600;">${escapeHTML(v.title)}</div><div style="font-size:12px;color:var(--text2);">${v.views||0} views</div></div></div>`; }))).join('') : '<p>No results.</p>'; }
 
-/* UPLOAD (With Background Processing & Min Duration Validator) */
 async function submitUpload() {
-  if (!State.currentUser) { toast('Sign in to upload videos','error'); navigate('auth'); return; }
-  
-  const title = document.getElementById('up-title').value.trim();
-  const fileInput = document.getElementById('up-video-file');
-  const thumbFile = document.getElementById('up-thumb-file');
-  const duration = document.getElementById('up-duration').value.trim();
-  const vType = document.getElementById('up-type').value;
+  if (!State.currentUser) { toast('Sign in to upload','error'); navigate('auth'); return; }
+  const title = document.getElementById('up-title').value.trim(); const fileInput = document.getElementById('up-video-file'); const thumbFile = document.getElementById('up-thumb-file'); const duration = document.getElementById('up-duration').value.trim(); const vType = document.getElementById('up-type').value;
+  if (!title) return toast('Video title is required','error'); if (!fileInput.files.length) return toast('Please select a video file','error'); if (!duration) return toast('Duration required','error');
+  if(vType === 'video') { const parts = duration.split(':'); if(parts.length < 2) return toast("Duration must be format MM:SS", "error"); const totalSec = parseInt(parts[0]) * 60 + parseInt(parts[1]); if(totalSec < 60) return toast("Long videos must be at least 1 minute long.", "error"); }
 
-  if (!title) { toast('Video title is required','error'); return; }
-  if (!fileInput.files.length) { toast('Please select a video file','error'); return; }
-  if (!duration) { toast('Duration required (e.g., 01:20)','error'); return; }
-
-  // Validator: Minimum 1 minute for long videos
-  if(vType === 'video') {
-     const parts = duration.split(':');
-     if(parts.length < 2) return toast("Duration must be format MM:SS", "error");
-     const totalSec = parseInt(parts[0]) * 60 + parseInt(parts[1]);
-     if(totalSec < 60) return toast("Long videos must be at least 1 minute long.", "error");
-  }
-
-  // Go to home and start background processing display
-  navigate('home');
-  document.getElementById('upload-progress-banner').style.display = 'flex';
-  const progText = document.getElementById('upload-percent');
-  const progBar = document.getElementById('upload-prog-bar');
+  navigate('home'); document.getElementById('upload-progress-banner').style.display = 'flex'; const progText = document.getElementById('upload-percent'); const progBar = document.getElementById('upload-prog-bar');
   
   try {
-    // 1. Upload the Video File (Using XMLHttpRequest to get real progress event)
-    let formData = new FormData();
-    formData.append("file", fileInput.files[0]);
-    formData.append("api_key", K);
-
-    let upRes = await new Promise((resolve, reject) => {
-       const xhr = new XMLHttpRequest();
-       xhr.open("POST", B+"/api/upload");
-       xhr.upload.onprogress = (e) => {
-          if(e.lengthComputable) {
-             let percent = Math.round((e.loaded / e.total) * 95); // max 95% until thumb/DB done
-             progText.innerText = percent + '%';
-             progBar.style.width = percent + '%';
-          }
-       };
-       xhr.onload = () => { if(xhr.status === 200) resolve(JSON.parse(xhr.response)); else reject(xhr.response); };
-       xhr.onerror = () => reject("Network error");
-       xhr.send(formData);
-    });
-
-    if(!upRes.url) { throw new Error(upRes.message || 'Video upload failed'); }
+    let formData = new FormData(); formData.append("file", fileInput.files[0]); formData.append("api_key", K);
+    let upRes = await new Promise((resolve, reject) => { const xhr = new XMLHttpRequest(); xhr.open("POST", B+"/api/upload"); xhr.upload.onprogress = (e) => { if(e.lengthComputable) { let percent = Math.round((e.loaded / e.total) * 95); progText.innerText = percent + '%'; progBar.style.width = percent + '%'; } }; xhr.onload = () => { if(xhr.status === 200) resolve(JSON.parse(xhr.response)); else reject(xhr.response); }; xhr.onerror = () => reject("Network error"); xhr.send(formData); });
+    if(!upRes.url) throw new Error(upRes.message || 'Video upload failed');
     
-    // 2. Upload Thumbnail if exists
     let finalThumbUrl = THUMB_PLACEHOLDERS[Math.floor(Math.random()*12)];
-    if(thumbFile.files.length > 0) {
-       let thumbData = new FormData();
-       thumbData.append("file", thumbFile.files[0]);
-       thumbData.append("api_key", K);
-       const thumbRes = await fetch(B+"/api/upload", { method:"POST", body:thumbData }).then(r=>r.json());
-       if(thumbRes.url) finalThumbUrl = thumbRes.url;
-    }
+    if(thumbFile.files.length > 0) { let thumbData = new FormData(); thumbData.append("file", thumbFile.files[0]); thumbData.append("api_key", K); const thumbRes = await fetch(B+"/api/upload", { method:"POST", body:thumbData }).then(r=>r.json()); if(thumbRes.url) finalThumbUrl = thumbRes.url; }
 
-    progText.innerText = '100%';
-    progBar.style.width = '100%';
-
-    // 3. Save to Database
-    const v = {
-      id: 'v_' + Date.now(),
-      title, 
-      description: document.getElementById('up-desc').value, 
-      driveLink: upRes.url, 
-      thumbnail: finalThumbUrl,
-      duration: duration, 
-      category: document.getElementById('up-cat').value,
-      type: vType, 
-      channelId: State.currentUser.uid,
-      views: 0, 
-      viewedBy: [],
-      likes: [],
-      uploadDate: new Date().toISOString(),
-      status: 'pending' 
-    };
-
-    const existingVideos = await getVideos();
-    existingVideos.push(v);
-    await cloudSet('videos', existingVideos);
-
-    setTimeout(() => {
-       document.getElementById('upload-progress-banner').style.display = 'none';
-       toast('Upload Complete! Awaiting Admin Approval.','success');
-    }, 1500);
-
-    // Clear form
-    ['up-title','up-desc','up-duration'].forEach(i=>{ const el=document.getElementById(i); if(el)el.value=''; });
-    fileInput.value = '';
-    thumbFile.value = '';
-
-  } catch(e) { 
-    document.getElementById('upload-progress-banner').style.display = 'none';
-    toast('Upload Error: ' + e.message, 'error'); 
-  }
+    progText.innerText = '100%'; progBar.style.width = '100%';
+    const v = { id: 'v_' + Date.now(), title, description: document.getElementById('up-desc').value, driveLink: upRes.url, thumbnail: finalThumbUrl, duration: duration, category: document.getElementById('up-cat').value, type: vType, channelId: State.currentUser.uid, views: 0, viewedBy: [], likes: [], uploadDate: new Date().toISOString(), status: 'pending' };
+    const existingVideos = await getVideos(); existingVideos.push(v); await cloudSet('videos', existingVideos);
+    setTimeout(() => { document.getElementById('upload-progress-banner').style.display = 'none'; toast('Upload Complete! Awaiting Admin Approval.','success'); }, 1500);
+    ['up-title','up-desc','up-duration'].forEach(i=>{ const el=document.getElementById(i); if(el)el.value=''; }); fileInput.value = ''; thumbFile.value = '';
+  } catch(e) { document.getElementById('upload-progress-banner').style.display = 'none'; toast('Upload Error: ' + e.message, 'error'); }
 }
 
-/* UI UTILS */
 function toggleSidebar() { const sb=document.getElementById('sidebar'); if(window.innerWidth<=768){sb.classList.toggle('mobile-open'); document.getElementById('sidebar-overlay').classList.toggle('show');} else sb.classList.toggle('collapsed'); }
 function closeSidebar() { document.getElementById('sidebar').classList.remove('mobile-open'); document.getElementById('sidebar-overlay').classList.remove('show'); }
 function toggleProfileMenu() { document.getElementById('profile-dropdown').classList.toggle('open'); }
@@ -1832,14 +895,7 @@ document.addEventListener('click', e=>{ if(!e.target.closest('#profile-dropdown'
 function toast(msg, type='info') { const el=document.createElement('div'); el.className='toast '+(type==='error'?'error':'success'); el.textContent=msg; document.getElementById('toast-container').appendChild(el); setTimeout(()=>{ el.style.opacity='0'; setTimeout(()=>el.remove(),300); }, 3200); }
 function showSpinner(text="Loading...") { document.getElementById('loading-text').textContent = text; document.getElementById('loading-spinner').classList.add('show'); }
 function hideSpinner() { document.getElementById('loading-spinner').classList.remove('show'); }
-function switchAuthTab(tab, el) {
-  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('auth-login').style.display=tab==='login'?'block':'none';
-  document.getElementById('auth-signup').style.display=tab==='signup'?'block':'none';
-  // Reset OTP steps
-  showLoginStep1(); showSignupStep1();
-}
+function switchAuthTab(tab, el) { document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); document.getElementById('auth-login').style.display=tab==='login'?'block':'none'; document.getElementById('auth-signup').style.display=tab==='signup'?'block':'none'; showLoginStep1(); showSignupStep1(); }
 </script>
 </body>
 </html>
