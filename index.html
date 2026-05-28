@@ -614,97 +614,167 @@ img{object-fit:cover}
 
 <script>
 /* =========================================================
-   Cloud Nest BaaS Integration (Synced Configuration)
+   CloudNest BaaS Configuration
+   ✏️ শুধু নিচের দুটো লাইন পরিবর্তন করুন
 ========================================================= */
-const B = "https://cloudnest.pythonanywhere.com";
-const K = "rf_admin250fahim771357013";
+const B = "https://fahim250-cloudnest.hf.space"; // ← আপনার Hugging Face Space BASE URL
+const K = "rf_admin250fahim771357013";            // ← আপনার Admin API Key
+
+/* =========================================================
+   CloudNest API Helpers
+   Backend Endpoints:
+     POST /api/auth   → action: register | login | list | delete | update_password
+     POST /api/db     → action: save | load | delete
+     POST /api/upload → multipart: file + api_key
+     POST /api/storage/delete → filename + api_key
+========================================================= */
+async function cloudSet(key, data) {
+  try {
+    const r = await fetch(B+"/api/db", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"save", key:key, data:data}) });
+    return await r.json();
+  } catch(e) { return null; }
+}
+async function cloudGet(key) {
+  try {
+    const r = await fetch(B+"/api/db", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"load", key:key}) });
+    const res = await r.json(); return res.data;
+  } catch(e) { return null; }
+}
+async function cloudDelete(key) {
+  try {
+    const r = await fetch(B+"/api/db", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"delete", key:key}) });
+    return await r.json();
+  } catch(e) { return null; }
+}
+async function cloudUploadFile(fileObj) {
+  // CloudNest /api/upload → returns { status, url, filename }
+  const formData = new FormData();
+  formData.append("file", fileObj);
+  formData.append("api_key", K);
+  const r = await fetch(B+"/api/upload", { method:"POST", body:formData });
+  return await r.json();
+}
+async function cloudDeleteFile(filename) {
+  try {
+    const r = await fetch(B+"/api/storage/delete", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, filename:filename}) });
+    return await r.json();
+  } catch(e) { return null; }
+}
+async function cloudAuthRegister(username, password) {
+  // CloudNest /api/auth → action: register
+  const r = await fetch(B+"/api/auth", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"register", username:username, password:password}) });
+  return await r.json();
+}
+async function cloudAuthLogin(username, password) {
+  // CloudNest /api/auth → action: login
+  const r = await fetch(B+"/api/auth", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"login", username:username, password:password}) });
+  return await r.json();
+}
+async function updateVideoInDB(videoId, updates) {
+  const videos = await getVideos(); const vIndex = videos.findIndex(v => v.id === videoId);
+  if(vIndex > -1) { videos[vIndex] = { ...videos[vIndex], ...updates }; await cloudSet('videos', videos); }
+}
 
 /* STATE */
 const State = { currentUser: null, currentPage: 'home', currentVideo: null, currentCategory: 'All', currentSearchQuery: '', subscriptions: [], history: [], watchLater: [], channelCache: {} };
 
-async function cloudSet(key, data) { try { const r = await fetch(B+"/api/db", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"save", key:key, data:data}) }); return await r.json(); } catch(e) { return null; } }
-async function cloudGet(key) { try { const r = await fetch(B+"/api/db", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"load", key:key}) }); const res = await r.json(); return res.data; } catch(e) { return null; } }
-async function updateVideoInDB(videoId, updates) { const videos = await getVideos(); const vIndex = videos.findIndex(v => v.id === videoId); if(vIndex > -1) { videos[vIndex] = { ...videos[vIndex], ...updates }; await cloudSet('videos', videos); } }
+window.onload = async () => {
+  const saved = localStorage.getItem('vt_user');
+  if (saved) { State.currentUser = JSON.parse(saved); await loadUserData(State.currentUser.uid); }
+  updateNavForUser(); navigate('home');
+};
 
-window.onload = async () => { const saved = localStorage.getItem('vt_user'); if (saved) { State.currentUser = JSON.parse(saved); await loadUserData(State.currentUser.uid); } updateNavForUser(); navigate('home'); };
-
-/* AUTH */
+/* =========================================================
+   AUTH — CloudNest /api/auth (OTP-মুক্ত, সরাসরি login/register)
+========================================================= */
 function updateNavForUser() {
-  const u = State.currentUser; document.getElementById('pd-username').textContent = u ? u.displayName : 'Guest';
+  const u = State.currentUser;
+  document.getElementById('pd-username').textContent = u ? u.displayName : 'Guest';
   const btn = document.getElementById('pd-auth-btn'); const chBtn = document.getElementById('pd-your-channel');
-  if (u) { btn.innerHTML = `Sign Out`; chBtn.style.display = 'flex'; document.getElementById('nav-avatar').src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u.displayName||u.uid)}&backgroundColor=ff3b3b&textColor=ffffff`; } 
-  else { btn.innerHTML = `Sign In`; chBtn.style.display = 'none'; document.getElementById('nav-avatar').src = `https://api.dicebear.com/7.x/initials/svg?seed=Guest&backgroundColor=444444&textColor=ffffff`; }
+  if (u) {
+    btn.innerHTML = `Sign Out`; chBtn.style.display = 'flex';
+    document.getElementById('nav-avatar').src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(u.displayName||u.uid)}&backgroundColor=ff3b3b&textColor=ffffff`;
+  } else {
+    btn.innerHTML = `Sign In`; chBtn.style.display = 'none';
+    document.getElementById('nav-avatar').src = `https://api.dicebear.com/7.x/initials/svg?seed=Guest&backgroundColor=444444&textColor=ffffff`;
+  }
 }
 
-const OTP_API_KEY = 'rf_admin250fahim771357013';
-const OTP_BASE = 'https://cloudnest.pythonanywhere.com/api/otp';
-const ALLOWED_DOMAINS = ['gmail.com','outlook.com','hotmail.com'];
-
-function isAllowedEmail(email) { const domain = email.split('@')[1] || ''; return ALLOWED_DOMAINS.includes(domain.toLowerCase()); }
-async function sendOtp(email) { const r = await fetch(OTP_BASE+'/send', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ api_key: OTP_API_KEY, email }) }); return await r.json(); }
-async function verifyOtp(email, otp) { const r = await fetch(OTP_BASE+'/verify', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ api_key: OTP_API_KEY, email, otp: String(otp) }) }); return await r.json(); }
-
-function showLoginStep1() { document.getElementById('login-step1').style.display = 'block'; document.getElementById('login-step2').style.display = 'none'; }
+// Login Step 1 এবং Step 2 এর জন্য compatibility functions (UI অক্ষত রাখতে)
+function showLoginStep1() {
+  document.getElementById('login-step1').style.display = 'block';
+  document.getElementById('login-step2').style.display = 'none';
+}
 async function requestLoginOtp() {
-  const email = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-pass').value;
-  if (!email || !pass) return toast('সব ফিল্ড পূরণ করুন','error'); if (!isAllowedEmail(email)) return toast('শুধু @gmail.com, @outlook.com, @hotmail.com ইমেইল অনুমোদিত','error');
-  showSpinner("Checking credentials...");
+  // OTP নেই — সরাসরি CloudNest /api/auth login করে
+  const email = document.getElementById('login-email').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (!email || !pass) return toast('সব ফিল্ড পূরণ করুন', 'error');
+  showSpinner("লগইন হচ্ছে...");
   try {
-    const r = await fetch(B+"/api/auth", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"login", username:email, password:pass}) }); const res = await r.json();
-    if(!(res.status === 'success' || res.message === 'Login successful')) { hideSpinner(); return toast(res.message || 'ইমেইল বা পাসওয়ার্ড ভুল', 'error'); }
-  } catch(e) { hideSpinner(); return toast('Error: '+e.message,'error'); }
-  showSpinner("OTP পাঠানো হচ্ছে...");
-  try {
-    const res = await sendOtp(email); hideSpinner();
-    if (res.success || res.status === 'success' || res.message?.toLowerCase().includes('sent')) {
-      document.getElementById('login-otp-email-display').textContent = email; document.getElementById('login-step1').style.display = 'none'; document.getElementById('login-step2').style.display = 'block'; toast('OTP পাঠানো হয়েছে!','success');
-    } else toast(res.message || 'OTP পাঠাতে ব্যর্থ', 'error');
-  } catch(e) { hideSpinner(); toast('OTP Error: ' + e.message, 'error'); }
+    const res = await cloudAuthLogin(email, pass); hideSpinner();
+    if (res.status === 'success') {
+      // প্রোফাইল ডেটা লোড করুন
+      const profileData = await cloudGet('users_' + email);
+      const displayName = (profileData && profileData.displayName) ? profileData.displayName : email.split('@')[0];
+      State.currentUser = { uid: email, email: email, displayName: displayName };
+      localStorage.setItem('vt_user', JSON.stringify(State.currentUser));
+      await loadUserData(email); updateNavForUser(); showLoginStep1();
+      toast('সফলভাবে লগইন হয়েছে।', 'success'); navigate('home');
+    } else {
+      toast(res.message || 'ইউজারনেম বা পাসওয়ার্ড ভুল', 'error');
+    }
+  } catch(e) { hideSpinner(); toast('Error: ' + e.message, 'error'); }
 }
-
 async function verifyLoginOtp() {
-  const email = document.getElementById('login-email').value.trim(); const otp = document.getElementById('login-otp').value.trim();
-  if (!otp) return toast('OTP দিন','error');
-  showSpinner("Verifying...");
-  try {
-    const res = await verifyOtp(email, otp); hideSpinner();
-    if (res.success || res.status === 'success' || res.valid === true) {
-      State.currentUser = { uid: email, email: email, displayName: email.split('@')[0] }; localStorage.setItem('vt_user', JSON.stringify(State.currentUser)); await loadUserData(email); updateNavForUser(); showLoginStep1(); toast('সফলভাবে লগইন হয়েছে।','success'); navigate('home');
-    } else toast('OTP ভুল!', 'error');
-  } catch(e) { hideSpinner(); toast('Error: '+e.message,'error'); }
+  // OTP step নেই, এই ফাংশন ডাকা হবে না তবে UI compatibility এর জন্য রাখা হয়েছে
+  await requestLoginOtp();
 }
 
-function showSignupStep1() { document.getElementById('signup-step1').style.display = 'block'; document.getElementById('signup-step2').style.display = 'none'; }
+// Signup Step 1 এবং Step 2 এর জন্য compatibility functions
+function showSignupStep1() {
+  document.getElementById('signup-step1').style.display = 'block';
+  document.getElementById('signup-step2').style.display = 'none';
+}
 async function requestSignupOtp() {
-  const name = document.getElementById('signup-name').value.trim(); const email = document.getElementById('signup-email').value.trim(); const pass = document.getElementById('signup-pass').value;
-  if (!name || !email || !pass) return toast('সব ফিল্ড পূরণ করুন','error'); if (pass.length < 6) return toast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে','error'); if (!isAllowedEmail(email)) return toast('শুধু @gmail.com, @outlook.com, @hotmail.com ইমেইল অনুমোদিত','error');
-  showSpinner("OTP পাঠানো হচ্ছে...");
+  // OTP নেই — সরাসরি CloudNest /api/auth register করে
+  const name = document.getElementById('signup-name').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const pass = document.getElementById('signup-pass').value;
+  if (!name || !email || !pass) return toast('সব ফিল্ড পূরণ করুন', 'error');
+  if (pass.length < 6) return toast('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে', 'error');
+  showSpinner("অ্যাকাউন্ট তৈরি হচ্ছে...");
   try {
-    const res = await sendOtp(email); hideSpinner();
-    if (res.success || res.status === 'success' || res.message?.toLowerCase().includes('sent')) {
-      document.getElementById('signup-otp-email-display').textContent = email; document.getElementById('signup-step1').style.display = 'none'; document.getElementById('signup-step2').style.display = 'block'; toast('OTP পাঠানো হয়েছে!','success');
-    } else toast(res.message || 'OTP পাঠাতে ব্যর্থ','error');
-  } catch(e) { hideSpinner(); toast('OTP Error: ' + e.message, 'error'); }
+    const res = await cloudAuthRegister(email, pass); hideSpinner();
+    if (res.status === 'success') {
+      // CloudNest DB তে প্রোফাইল সেভ করুন
+      await cloudSet('users_' + email, { displayName: name, email, createdAt: Date.now() });
+      State.currentUser = { uid: email, email: email, displayName: name };
+      localStorage.setItem('vt_user', JSON.stringify(State.currentUser));
+      await loadUserData(email); updateNavForUser(); showSignupStep1();
+      toast('অ্যাকাউন্ট তৈরি হয়েছে!', 'success'); navigate('home');
+    } else {
+      toast(res.message || 'রেজিস্ট্রেশন ব্যর্থ। ইউজারনেম ইতিমধ্যে আছে?', 'error');
+    }
+  } catch(e) { hideSpinner(); toast('Error: ' + e.message, 'error'); }
 }
-
 async function verifySignupOtp() {
-  const name = document.getElementById('signup-name').value.trim(); const email = document.getElementById('signup-email').value.trim(); const pass = document.getElementById('signup-pass').value; const otp = document.getElementById('signup-otp').value.trim();
-  if (!otp) return toast('OTP দিন','error'); showSpinner("যাচাই করা হচ্ছে...");
-  try {
-    const res = await verifyOtp(email, otp);
-    if (res.success || res.status === 'success' || res.valid === true) {
-      const r2 = await fetch(B+"/api/auth", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({api_key:K, action:"register", username:email, password:pass}) }); const res2 = await r2.json(); hideSpinner();
-      if(res2.status === 'success' || res2.message === 'User registered successfully') {
-        State.currentUser = { uid: email, email: email, displayName: name }; localStorage.setItem('vt_user', JSON.stringify(State.currentUser)); await cloudSet('users_' + email, { displayName: name, email, createdAt: Date.now() }); await loadUserData(email); updateNavForUser(); showSignupStep1(); toast('অ্যাকাউন্ট তৈরি হয়েছে!', 'success'); navigate('home');
-      } else toast(res2.message || 'রেজিস্ট্রেশন ব্যর্থ', 'error');
-    } else { hideSpinner(); toast('OTP ভুল!', 'error'); }
-  } catch(e) { hideSpinner(); toast('Error: '+e.message,'error'); }
+  // OTP step নেই, এই ফাংশন ডাকা হবে না তবে UI compatibility এর জন্য রাখা হয়েছে
+  await requestSignupOtp();
 }
 
 function signOutUser() { State.currentUser = null; localStorage.removeItem('vt_user'); updateNavForUser(); toast('Signed out','success'); navigate('home'); }
 function handleAuthClick() { closeMenus(); if (State.currentUser) signOutUser(); else navigate('auth'); }
-async function loadUserData(uid) { const data = await cloudGet('users_'+uid); if (data) { State.currentUser.displayName = data.displayName||State.currentUser.displayName; State.subscriptions = data.subscriptions||[]; State.history = data.history||[]; State.watchLater = data.watchLater||[]; } }
-async function saveUserData() { if(!State.currentUser) return; const data = await cloudGet('users_'+State.currentUser.uid) || {}; data.subscriptions = State.subscriptions; data.history = State.history; data.watchLater = State.watchLater; await cloudSet('users_'+State.currentUser.uid, data); }
+async function loadUserData(uid) {
+  const data = await cloudGet('users_'+uid);
+  if (data) { State.currentUser.displayName = data.displayName||State.currentUser.displayName; State.subscriptions = data.subscriptions||[]; State.history = data.history||[]; State.watchLater = data.watchLater||[]; }
+}
+async function saveUserData() {
+  if(!State.currentUser) return;
+  const data = await cloudGet('users_'+State.currentUser.uid) || {};
+  data.subscriptions = State.subscriptions; data.history = State.history; data.watchLater = State.watchLater;
+  await cloudSet('users_'+State.currentUser.uid, data);
+}
 
 function stopAllVideos() { document.querySelectorAll('video').forEach(vid => { vid.pause(); vid.removeAttribute('src'); vid.load(); }); document.getElementById('player-wrap').innerHTML = ''; document.getElementById('shorts-container').innerHTML = ''; }
 const PAGES = ['home','shorts','library','history','upload','watch','search','auth','channel'];
@@ -864,27 +934,83 @@ function doSearch() { const q = document.getElementById('search-input').value.tr
 async function renderSearch() { const q = State.currentSearchQuery.toLowerCase(); const list = document.getElementById('search-results-list'); const videos = await getVideos(); const results = videos.filter(v=> v.status === 'approved' && (v.title.toLowerCase().includes(q) || (v.category||'').toLowerCase().includes(q))); list.innerHTML = results.length ? (await Promise.all(results.map(async v=>{ return `<div class="search-result" onclick="watchVideo('${v.id}')" style="display:flex;gap:12px;margin-bottom:12px;cursor:pointer;"><div style="width:200px;flex-shrink:0;"><img style="width:100%;border-radius:8px;aspect-ratio:16/9;object-fit:cover;" src="${v.thumbnail||THUMB_PLACEHOLDERS[0]}"/></div><div><div style="font-weight:600;">${escapeHTML(v.title)}</div><div style="font-size:12px;color:var(--text2);">${v.views||0} views</div></div></div>`; }))).join('') : '<p>No results.</p>'; }
 
 async function submitUpload() {
-  if (!State.currentUser) { toast('Sign in to upload','error'); navigate('auth'); return; }
-  const title = document.getElementById('up-title').value.trim(); const fileInput = document.getElementById('up-video-file'); const thumbFile = document.getElementById('up-thumb-file'); const duration = document.getElementById('up-duration').value.trim(); const vType = document.getElementById('up-type').value;
-  if (!title) return toast('Video title is required','error'); if (!fileInput.files.length) return toast('Please select a video file','error'); if (!duration) return toast('Duration required','error');
-  if(vType === 'video') { const parts = duration.split(':'); if(parts.length < 2) return toast("Duration must be format MM:SS", "error"); const totalSec = parseInt(parts[0]) * 60 + parseInt(parts[1]); if(totalSec < 60) return toast("Long videos must be at least 1 minute long.", "error"); }
+  if (!State.currentUser) { toast('Sign in to upload', 'error'); navigate('auth'); return; }
+  const title = document.getElementById('up-title').value.trim();
+  const fileInput = document.getElementById('up-video-file');
+  const thumbFile = document.getElementById('up-thumb-file');
+  const duration = document.getElementById('up-duration').value.trim();
+  const vType = document.getElementById('up-type').value;
+  if (!title) return toast('Video title is required', 'error');
+  if (!fileInput.files.length) return toast('Please select a video file', 'error');
+  if (!duration) return toast('Duration required', 'error');
+  if (vType === 'video') {
+    const parts = duration.split(':');
+    if (parts.length < 2) return toast("Duration must be format MM:SS", "error");
+    const totalSec = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    if (totalSec < 60) return toast("Long videos must be at least 1 minute long.", "error");
+  }
 
-  navigate('home'); document.getElementById('upload-progress-banner').style.display = 'flex'; const progText = document.getElementById('upload-percent'); const progBar = document.getElementById('upload-prog-bar');
-  
+  navigate('home');
+  document.getElementById('upload-progress-banner').style.display = 'flex';
+  const progText = document.getElementById('upload-percent');
+  const progBar = document.getElementById('upload-prog-bar');
+
   try {
-    let formData = new FormData(); formData.append("file", fileInput.files[0]); formData.append("api_key", K);
-    let upRes = await new Promise((resolve, reject) => { const xhr = new XMLHttpRequest(); xhr.open("POST", B+"/api/upload"); xhr.upload.onprogress = (e) => { if(e.lengthComputable) { let percent = Math.round((e.loaded / e.total) * 95); progText.innerText = percent + '%'; progBar.style.width = percent + '%'; } }; xhr.onload = () => { if(xhr.status === 200) resolve(JSON.parse(xhr.response)); else reject(xhr.response); }; xhr.onerror = () => reject("Network error"); xhr.send(formData); });
-    if(!upRes.url) throw new Error(upRes.message || 'Video upload failed');
-    
-    let finalThumbUrl = THUMB_PLACEHOLDERS[Math.floor(Math.random()*12)];
-    if(thumbFile.files.length > 0) { let thumbData = new FormData(); thumbData.append("file", thumbFile.files[0]); thumbData.append("api_key", K); const thumbRes = await fetch(B+"/api/upload", { method:"POST", body:thumbData }).then(r=>r.json()); if(thumbRes.url) finalThumbUrl = thumbRes.url; }
+    // ভিডিও আপলোড → CloudNest /api/upload (XHR for progress)
+    const formData = new FormData();
+    formData.append("file", fileInput.files[0]);
+    formData.append("api_key", K);
+    const upRes = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", B + "/api/upload");
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) { let pct = Math.round((e.loaded / e.total) * 90); progText.innerText = pct + '%'; progBar.style.width = pct + '%'; }
+      };
+      xhr.onload = () => { if (xhr.status === 200) resolve(JSON.parse(xhr.response)); else reject(xhr.response); };
+      xhr.onerror = () => reject("Network error");
+      xhr.send(formData);
+    });
+    if (!upRes.url) throw new Error(upRes.message || 'Video upload failed');
+
+    // থাম্বনেইল আপলোড → CloudNest /api/upload
+    let finalThumbUrl = THUMB_PLACEHOLDERS[Math.floor(Math.random() * 12)];
+    if (thumbFile.files.length > 0) {
+      progText.innerText = '95%'; progBar.style.width = '95%';
+      const thumbRes = await cloudUploadFile(thumbFile.files[0]);
+      if (thumbRes && thumbRes.url) finalThumbUrl = thumbRes.url;
+    }
 
     progText.innerText = '100%'; progBar.style.width = '100%';
-    const v = { id: 'v_' + Date.now(), title, description: document.getElementById('up-desc').value, driveLink: upRes.url, thumbnail: finalThumbUrl, duration: duration, category: document.getElementById('up-cat').value, type: vType, channelId: State.currentUser.uid, views: 0, viewedBy: [], likes: [], uploadDate: new Date().toISOString(), status: 'pending' };
-    const existingVideos = await getVideos(); existingVideos.push(v); await cloudSet('videos', existingVideos);
-    setTimeout(() => { document.getElementById('upload-progress-banner').style.display = 'none'; toast('Upload Complete! Awaiting Admin Approval.','success'); }, 1500);
-    ['up-title','up-desc','up-duration'].forEach(i=>{ const el=document.getElementById(i); if(el)el.value=''; }); fileInput.value = ''; thumbFile.value = '';
-  } catch(e) { document.getElementById('upload-progress-banner').style.display = 'none'; toast('Upload Error: ' + e.message, 'error'); }
+
+    // ভিডিও মেটাডেটা CloudNest DB তে সেভ করুন
+    const v = {
+      id: 'v_' + Date.now(), title,
+      description: document.getElementById('up-desc').value,
+      driveLink: upRes.url,           // CloudNest hosted video URL
+      thumbnail: finalThumbUrl,        // CloudNest hosted thumbnail URL
+      storedFilename: upRes.filename,  // delete করার জন্য filename সংরক্ষণ
+      duration: duration,
+      category: document.getElementById('up-cat').value,
+      type: vType,
+      channelId: State.currentUser.uid,
+      views: 0, viewedBy: [], likes: [],
+      uploadDate: new Date().toISOString(),
+      status: 'pending'
+    };
+    const existingVideos = await getVideos();
+    existingVideos.push(v);
+    await cloudSet('videos', existingVideos);
+
+    setTimeout(() => {
+      document.getElementById('upload-progress-banner').style.display = 'none';
+      toast('Upload Complete! Awaiting Admin Approval.', 'success');
+    }, 1500);
+    ['up-title', 'up-desc', 'up-duration'].forEach(i => { const el = document.getElementById(i); if (el) el.value = ''; });
+    fileInput.value = ''; thumbFile.value = '';
+  } catch (e) {
+    document.getElementById('upload-progress-banner').style.display = 'none';
+    toast('Upload Error: ' + e.message, 'error');
+  }
 }
 
 function toggleSidebar() { const sb=document.getElementById('sidebar'); if(window.innerWidth<=768){sb.classList.toggle('mobile-open'); document.getElementById('sidebar-overlay').classList.toggle('show');} else sb.classList.toggle('collapsed'); }
